@@ -10,7 +10,8 @@ URL:api/v1/register
 
 Request:
 {
- 'username': '',
+ 'username': '',   // 必须是10位数学号
+ ‘email’:  '',     // 只在注册的时候用于验证
  'password': ''
 }
 
