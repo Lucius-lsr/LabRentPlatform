@@ -1,20 +1,137 @@
 from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
+from django.contrib.auth.hashers import make_password, check_password
+from core.models import *
+from core.utils.email_helper import send_email_code
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
+from datetime import datetime
+import re
+import uuid
 
 # Create your views here.
 
 '''------------normal user-------------'''
 
 
+@csrf_exempt
 def register(request):
-    pass
+    if request.method != 'POST':
+        return JsonResponse({'error': 'require POST'})
+
+    username = request.POST.get('username')
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+    if not username or not password or not email:
+        return JsonResponse({'error': 'invalid parameters'})
+    if not re.match('\d{10}', username):
+        return JsonResponse({'error': 'not student id'})
+    if not re.match('^(.+)@mail(s?).tsinghua.edu.cn$', email):
+        return JsonResponse({'error': 'not tsinghua email'})
+
+    user_exist = User.objects.filter(Q(username=username) | Q(email=email))
+    if user_exist:
+        user_exist = user_exist.first()
+        if user_exist.is_verified:  # 已经有用户
+            return JsonResponse({'error': 'user exists'})
+        else:  # 已经有用户但没有验证
+            try:
+                send_email_code(email, 1, request.get_host())
+            except ConnectionRefusedError:
+                return JsonResponse({'error': 'fail to send email'})
+            else:
+                user_exist.username = username
+                user_exist.password = make_password(password)
+                user_exist.email = email
+                user_exist.save()
+                return HttpResponse('验证已重新发送，请尽快前往您的邮箱激活，否则无法登陆')
+
+    try:
+        send_email_code(email, 1, request.get_host())
+    except ConnectionRefusedError:
+        return HttpResponse('请尽快前往您的邮箱激活，否则无法登陆')
+    else:
+        user = User()
+        user.username = username
+        user.password = make_password(password)
+        user.email = email
+        user.save()
+        return HttpResponse('请尽快前往您的邮箱激活，否则无法登陆')
 
 
+@csrf_exempt
+def user_verify(request, code):
+    if code:
+        email_ver_list = EmailVerifyCode.objects.filter(code=code)
+        if email_ver_list:
+            email_ver = email_ver_list.first()
+            email = email_ver.email
+            user_list = User.objects.filter(email=email)
+            if user_list:
+                user = user_list.first()
+                if not user.is_verified:
+                    if (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds() > 3600:  # 有效时间1h
+                        email_ver.delete()
+                        return HttpResponse('验证已过期，验证失效')
+                    else:
+                        user.is_verified = True
+                        user.save()
+                        email_ver.delete()
+                        return HttpResponse('验证成功！')
+                else:
+                    email_ver.delete()
+                    return HttpResponse('用户已注册，验证失效')
+
+    return HttpResponse('验证失败')
+
+
+@csrf_exempt
 def login(request):
-    pass
+    if request.method != 'POST':
+        return JsonResponse({'error': 'require POST'})
+
+    username = request.POST.get('username')
+    user = User.objects.filter(username=username)
+    if not user:
+        return JsonResponse({'error': 'no such a user'})
+
+    user = user.first()
+    password_stored = user.password
+    password = request.POST.get('password')
+    if not check_password(password, password_stored):
+        return JsonResponse({'error': 'password is wrong'})
+
+    # has logged in
+    session_id = request.COOKIES.get('session_id', '')  # 通过session_id在数据库中找用户名
+    if session_id:
+        session_id_username = request.session.get(session_id, '')
+        if session_id_username:
+            return JsonResponse({'error': 'has logged in'})
+
+    # success
+    random_id = str(uuid.uuid4())
+    request.session[random_id] = username  # 服务器写入session
+    res = JsonResponse({'user': username})
+    res.set_cookie('session_id', random_id)  # 返回给浏览器cookies
+
+    return res
 
 
+@csrf_exempt
 def logout(request):
-    pass
+    if request.method != 'POST':
+        return JsonResponse({'error': 'require POST'})
+
+    session_id = request.COOKIES.get('session_id', '')  # 通过session_id在数据库中找用户名
+    if session_id:
+        session_id_username = request.session.get(session_id, '')
+        if session_id_username:
+            request.session.delete(session_id)
+            res = JsonResponse({'user': session_id_username})
+            res.delete_cookie('session_id')
+            return res
+    return JsonResponse({'error': 'no valid session'})
 
 
 def show_equipment(request):
