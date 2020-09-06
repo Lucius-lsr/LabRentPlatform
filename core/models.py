@@ -9,7 +9,7 @@ class User(models.Model):
     is_provider = models.BooleanField()
 
 
-class RentApply(models.Model):
+class BorrowApply(models.Model):
     borrower = models.ForeignKey('User', on_delete=models.CASCADE)  # 申请人如果被删则删除申请
     target_equipment = models.ForeignKey('Equipment', on_delete=models.SET_NULL)  # 租借设备如果被删则设为空
     end_time = models.DateTimeField()  # 结束时间
@@ -24,7 +24,7 @@ class OnShelfApply(models.Model):
     state = models.IntegerField()  # 0为等待审核，1为审核通过，2及其余为审核拒绝
 
 
-class BeingProviderApply(models.Model):
+class UpgradeApply(models.Model):
     applicant = models.ForeignKey('User', on_delete=models.CASCADE)  # 申请人如果被删则删除申请
     lab_info = models.TextField(max_length=200)
     state = models.IntegerField()  # 0为等待审核，1为审核通过，2及其余为审核拒绝
