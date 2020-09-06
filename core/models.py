@@ -36,5 +36,12 @@ class Equipment(models.Model):
     description = models.CharField(max_length=500)
     count = models.IntegerField()
 
-    user = models.ForeignKey("User", related_name='equipments')
-    provider = models.ForeignKey("Provider", on_delete=models.CASCADE, related_name='equipments')
+    provider = models.ForeignKey("User", on_delete=models.CASCADE, related_name='equipments')
+
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'count': self.count,
+            'provider': self.provider
+        }
