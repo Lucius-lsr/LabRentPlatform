@@ -10,6 +10,15 @@ class User(models.Model):
     is_verified = models.BooleanField(default=False, verbose_name="是否激活")
     is_provider = models.BooleanField(default=False, verbose_name="是否可以提供设备")
 
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'email': self.email,
+            'password': self.password,
+            'is_verified': self.is_verified,
+            'is_provider': self.is_provider
+        }
+
     def __str__(self):
         return self.username
 
@@ -65,6 +74,16 @@ class BorrowApply(models.Model):
     state = models.IntegerField(choices=((0, 'pending'), (1, 'accept'), (2, 'refuse'), (3, 'returned')),
                                 verbose_name='申请状态')
 
+    def to_dict(self):
+        return {
+            'borrower': self.borrower.to_dict(),
+            'count': self.count,
+            'target_equipment': self.target_equipment.to_dict(),
+            'endtime': self.end_time,
+            'reason': self.reason,
+            'state': self.state
+        }
+
     def __str__(self):
         return '%s租赁%s' % (self.borrower.username, self.target_equipment.name)
 
@@ -98,3 +117,5 @@ class UpgradeApply(models.Model):
     class Meta:
         verbose_name = '成为提供者申请'
         verbose_name_plural = verbose_name
+
+
