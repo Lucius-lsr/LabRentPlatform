@@ -84,7 +84,6 @@ URL:api/v1/apply
 
 QueryParam:
 {
- 'username':
  'id':
  'endtime':
  ’reason':
@@ -103,11 +102,6 @@ Method: Get
 
 URL:api/v1/applylist
 
-QueryParam:
-{
- 'username':1
-}
-
 Response:
 {
  posts:[]
@@ -120,11 +114,6 @@ Response:
 Method: Get
 
 URL:api/v1/rentlist
-
-QueryParam:
-{
- 'username':1
-}
 
 Response:
 {
@@ -141,7 +130,6 @@ URL:api/v1/upgrade
 
 QueryParam:
 {
- 'username':1
   manythings to add
 }
 
@@ -160,11 +148,6 @@ Method: Get
 
 URL:api/v2/search
 
-QueryParam:
-{
- 'username':1
-}
-
 Response:
 {
  posts:[]  #equipment information
@@ -180,7 +163,6 @@ URL:api/v2/edit
 
 QueryParam:
 {
-  #'username':1 可以不加，不验证这个设备是否属于这个用户
  'id':
  'name':
  'address':
@@ -203,7 +185,6 @@ URL:api/v2/add
 
 QueryParam:
 {
- 'username':
  'name':
  'address':
  'endtime':
@@ -225,7 +206,6 @@ URL:api/v2/delete
 
 QueryParam:
 {
- 'username':
  'id':
 }
 
@@ -279,11 +259,6 @@ Method: Get
 
 URL:api/v2/offshelf
 
-QueryParam:
-{
- 'username':
-}
-
 Response:
 {
  'posts':[]
@@ -315,11 +290,6 @@ Response:
 Method: Get
 
 URL:api/v2/searchrent
-
-QueryParam:
-{
- 'username'
-}
 
 Response:
 {
