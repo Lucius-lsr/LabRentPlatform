@@ -298,7 +298,21 @@ def off_shelf_equipment(request):
 
 
 def show_borrow_apply_list(request):
-    pass
+    if request.method == 'GET':
+        page = request.GET.get('page', 1)
+        username = check_username(request)
+        user = User.objects.get(username=username)
+        borrow_apply_list = user.borrowApplies.all()
+        borrow_apply_list = [b.to_dict() for b in borrow_apply_list]
+        total_page = int((len(borrow_apply_list) + PAGE_SIZE - 1) / PAGE_SIZE)
+        borrow_apply_list = borrow_apply_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
+        return JsonResponse({
+            'page': page,
+            'total_page': total_page,
+            'borrow_apply_list': borrow_apply_list
+        })
+    else:
+        return JsonResponse({'error': 'require POST'})
 
 
 def reply_borrow_apply(request):
