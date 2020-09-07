@@ -54,7 +54,7 @@ def register(request):
     try:
         send_email_code(email, 1, request.get_host())
     except ConnectionRefusedError:
-        return HttpResponse('请尽快前往您的邮箱激活，否则无法登陆')
+        return HttpResponse({'error': 'fail to send email'})
     else:
         user = User()
         user.username = username
@@ -107,11 +107,13 @@ def login(request):
         return JsonResponse({'error': 'password is wrong'})
 
     # has logged in
-    session_id = request.COOKIES.get('session_id', '')  # 通过session_id在数据库中找用户名
-    if session_id:
-        session_id_username = request.session.get(session_id, '')
-        if session_id_username:
+    session_username = check_username(request)
+    if session_username:  # 已经登录
+        if username == session_username:  # 同一用户
             return JsonResponse({'error': 'has logged in'})
+        else:  # 不同用户
+            session_id = request.COOKIES.get('session_id', '')
+            request.session.delete(session_id)  # 删除前一个登录状态
 
     # success
     random_id = str(uuid.uuid4())
