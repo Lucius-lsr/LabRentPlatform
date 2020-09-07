@@ -19,12 +19,12 @@ from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/register/', views.register),
-    re_path(r'^users/user_verify/(.+)/$', views.user_verify),
-    path('api/v1/login/', views.login),
-    path('api/v1/logout/', views.logout),
-    path('api/v1/apply/', views.borrow_apply),
-    path('api/v1/applylist/', views.get_borrow_apply_list),
-    path('api/v1/rentlist/', views.get_borrow_list),
-    path('api/v1/upgrade/', views.upgrade_apply),
+    path('api/v1/register', views.register),
+    re_path(r'^users/user_verify/(.+)$', views.user_verify),
+    path('api/v1/login', views.login),
+    path('api/v1/logout', views.logout),
+    path('api/v1/apply', views.borrow_apply),
+    path('api/v1/applylist', views.get_borrow_apply_list),
+    path('api/v1/rentlist', views.get_borrow_list),
+    path('api/v1/upgrade', views.upgrade_apply),
 ]

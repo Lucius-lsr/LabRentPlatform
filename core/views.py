@@ -34,9 +34,9 @@ def register(request):
     password = request.POST.get('password')
     if not username or not password or not email:
         return JsonResponse({'error': 'invalid parameters'})
-    if not re.match('\d{10}', username):
-        return JsonResponse({'error': 'not student id'})
-    if not re.match('^(.+)@mail(s?).tsinghua.edu.cn$', email):
+    if not re.match('.+', username):
+        return JsonResponse({'error': 'not valid id'})
+    if not re.match('^(.+)@(.+)$', email):
         return JsonResponse({'error': 'not tsinghua email'})
 
     user_exist = User.objects.filter(Q(username=username) | Q(email=email))
