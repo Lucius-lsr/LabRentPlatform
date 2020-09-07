@@ -140,9 +140,19 @@ def logout(request):
     return JsonResponse({'error': 'no valid session'})
 
 
-def show_equipment(request):
-    username = check_username(request)
-    pass
+# Get equipment detail by: id OR name
+def show_equipment_detail(request):
+    if request.method == 'GET':
+        equipment_id = request.GET.get('equipment_id', "")
+        name = request.GET.get('name', "")
+        custom_equipment = None
+        if equipment_id:
+            custom_equipment = Equipment.objects.get(id=equipment_id)
+        elif name:
+            custom_equipment = Equipment.objects.get(name=name)
+        return JsonResponse(custom_equipment.to_dict())
+    else:
+        return JsonResponse({'error': 'require GET'})
 
 
 def borrow_apply(request):
@@ -165,6 +175,7 @@ def upgrade_apply(request):
     pass
 
 
+# Get equipment list by: username OR equipment
 def search_equipment(request):
     if request.method == 'GET':
         equipment_list = []
@@ -190,37 +201,39 @@ def edit_equipment(request):
         count = request.POST.get('count')
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
-        custom_equipment.name = name
-        custom_equipment.name = description
-        custom_equipment.name = count
-        custom_equipment.save()
-        return HttpResponse(json.dumps({
-            'message': 'ok'
-        }), content_type="json")
+        username = check_username(request)
+        if custom_equipment and custom_equipment.provider.username == username:
+            custom_equipment.name = name
+            custom_equipment.name = description
+            custom_equipment.name = count
+            custom_equipment.save()
+            return JsonResponse({'message': 'ok'})
 
 
 def add_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('id')
         add_count = request.POST.get('addcount', 1)
+
         custom_equipment = Equipment.objects.get(id=equipment_id)
-        custom_equipment.count += add_count
-        custom_equipment.save()
-        return HttpResponse(json.dumps({
-            'message': 'ok'
-        }), content_type="json")
+        username = check_username(request)
+        if custom_equipment and custom_equipment.provider.username == username:
+            custom_equipment.count += add_count
+            custom_equipment.save()
+            return JsonResponse({'message': 'ok'})
 
 
 def delete_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('id')
         delete_count = request.POST.get('deletecount', 1)
+
         custom_equipment = Equipment.objects.get(id=equipment_id)
-        custom_equipment.count -= delete_count
-        custom_equipment.save()
-        return HttpResponse(json.dumps({
-            'message': 'ok'
-        }), content_type="json")
+        username = check_username(request)
+        if custom_equipment and custom_equipment.provider.username == username:
+            custom_equipment.count -= delete_count
+            custom_equipment.save()
+            return JsonResponse({'message': 'ok'})
 
 
 def on_shelf_equipment(request):
@@ -231,20 +244,20 @@ def on_shelf_equipment(request):
         Equipment(
             name=name,
             description=description,
-            count=count
+            count=count,
+            provider=User.objects.get(username=check_username(request))
         ).save()
-        return HttpResponse(json.dumps({
-            'message': 'ok'
-        }), content_type="json")
+        return JsonResponse({'message': 'ok'})
 
 
 def off_shelf_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('id')
-        Equipment.objects.get(id=equipment_id).delete()
-        return HttpResponse(json.dumps({
-            'message': 'ok'
-        }), content_type="json")
+        custom_equipment = Equipment.objects.get(id=equipment_id)
+        username = check_username(request)
+        if custom_equipment and custom_equipment.provider.username == username:
+            custom_equipment.delete()
+            return JsonResponse({'message': 'ok'})
 
 
 def show_borrow_apply_list(request):
