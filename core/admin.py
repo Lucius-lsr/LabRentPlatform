@@ -5,3 +5,6 @@ from core.models import *
 
 admin.site.register(User)
 admin.site.register(EmailVerifyCode)
+admin.site.register(Equipment)
+admin.site.register(BorrowApply)
+admin.site.register(UpgradeApply)

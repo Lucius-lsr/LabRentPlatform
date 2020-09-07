@@ -8,12 +8,15 @@ from core.utils.session_helper import check_username
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from datetime import datetime
+import django.core.exceptions
 import re
 import uuid
+from django.http import QueryDict
 
 from .models import User, BorrowApply, OnShelfApply, UpgradeApply, Equipment
 from django.http import HttpResponse
 import json
+
 # Create your views here.
 
 '''------------normal user-------------'''
@@ -110,6 +113,14 @@ def login(request):
     session_username = check_username(request)
     if session_username:  # 已经登录
         if username == session_username:  # 同一用户
+            # update upgrade info
+            if not user.is_provider:
+                apply = UpgradeApply.objects.filter(applicant=user)
+                if apply and apply.first().state == 1:
+                    user.is_provider = True
+                    user.save()
+                    apply.delete()
+                    return HttpResponse('Notice, you have upgraded!')
             return JsonResponse({'error': 'has logged in'})
         else:  # 不同用户
             session_id = request.COOKIES.get('session_id', '')
@@ -141,6 +152,7 @@ def logout(request):
 
 
 # Get equipment detail by: id OR name
+@csrf_exempt
 def show_equipment_detail(request):
     if request.method == 'GET':
         equipment_id = request.GET.get('equipment_id', "")
@@ -155,24 +167,122 @@ def show_equipment_detail(request):
         return JsonResponse({'error': 'require GET'})
 
 
+@csrf_exempt
 def borrow_apply(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'require POST'})
     username = check_username(request)
-    pass
+    if not username:
+        return JsonResponse({'error': 'please login'})
+    borrower = User.objects.filter(username=username)
+    if not borrower:
+        return JsonResponse({'error': 'please login'})
+    borrower = borrower.first()
 
+    target_id = request.POST.get('id', "")
+    end_time = request.POST.get('endtime', "")
+    reason = request.POST.get('reason', "")
+    try:
+        count = int(request.POST.get('count', ""))
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'invalid parameters'})
 
+    if not target_id or not end_time or count <= 0:
+        return JsonResponse({'error': 'invalid parameters'})
+
+    target = Equipment.objects.filter(id=target_id)
+    if not target:
+        return JsonResponse({'error': 'invalid id'})
+    target = target.first()
+    if target.count < count:
+        return JsonResponse({'error': 'not enough'})
+
+    try:
+        BorrowApply.objects.create(borrower=borrower, count=count, target_equipment=target, end_time=end_time,
+                                   reason=reason, state=0)
+        return HttpResponse('ok')
+    except django.core.exceptions.ValidationError:
+        return JsonResponse({'error': 'format error'})
+
+@csrf_exempt
 def get_borrow_apply_list(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'require GET'})
     username = check_username(request)
-    pass
+    if not username:
+        return JsonResponse({'error': 'please login'})
+    borrower = User.objects.filter(username=username)
+    if not borrower:
+        return JsonResponse({'error': 'please login'})
+    borrower = borrower.first()
+
+    borrow_applies = borrower.user_apply_set.all()
+    ret = []
+    for apply in borrow_applies:
+        count = apply.count
+        target_equipment = apply.target_equipment.to_dict()
+        end_time = apply.end_time
+        reason = apply.reason
+        state = apply.state
+        ret.append({'count': count, 'target_equipment': target_equipment, 'end_time': end_time, 'reason': reason,
+                    'state': state})
+
+    return JsonResponse({'posts': ret})
 
 
+@csrf_exempt
 def get_borrow_list(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'require GET'})
     username = check_username(request)
-    pass
+    if not username:
+        return JsonResponse({'error': 'please login'})
+    borrower = User.objects.filter(username=username)
+    if not borrower:
+        return JsonResponse({'error': 'please login'})
+    borrower = borrower.first()
+    current_borrow = borrower.user_apply_set.filter(state=1)
+    ret = []
+    for equipment in current_borrow:
+        count = equipment.count
+        end_time = equipment.end_time
+        target_equipment = equipment.target_equipment.to_dict()
+        ret.append({'count': count, 'target_equipment': target_equipment, 'end_time': end_time})
+
+    return JsonResponse({'posts': ret})
 
 
+@csrf_exempt
 def upgrade_apply(request):
+    if request.method != 'PUT':
+        return JsonResponse({'error': 'require PUT'})
     username = check_username(request)
-    pass
+    if not username:
+        return JsonResponse({'error': 'please login'})
+    user = User.objects.filter(username=username)
+    if not user:
+        return JsonResponse({'error': 'please login'})
+    user = user.first()
+
+    data = QueryDict(request.body)
+    lab_info = data.get('lab_info')
+    if not lab_info:
+        return JsonResponse({'error': 'require lab information'})
+
+    try:
+        if user.upgradeapply_set.all():  # 已经有申请了
+            previous_apply = user.upgradeapply_set.all().first()
+            if previous_apply.state == 1:
+                return JsonResponse({'error': 'has upgraded'})
+            previous_apply.lab_info = lab_info
+            previous_apply.state = 0
+            previous_apply.save()
+            return HttpResponse('modify successfully')
+        else:
+            UpgradeApply.objects.create(applicant=user, lab_info=lab_info, state=0)
+            return HttpResponse('ok')
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'fail to apply'})
 
 
 # Get equipment list by: username OR equipment
