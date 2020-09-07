@@ -14,7 +14,9 @@ import uuid
 from .models import User, BorrowApply, OnShelfApply, UpgradeApply, Equipment
 from django.http import HttpResponse
 import json
-# Create your views here.
+
+
+PAGE_SIZE = 10
 
 '''------------normal user-------------'''
 
@@ -179,16 +181,43 @@ def search_equipment(request):
         equipment_list = []
         username = request.GET.get('username', "")
         equipment_name = request.GET.get('name', "")
+        page = request.GET.get('page', 1)
         if username:
             user = User.objects.get(username=username)
             equipment_list = user.equipments.all()
         elif equipment_name:
             equipment_list = Equipment.objects.filter(name__contains=equipment_name)
         equipment_list = [e.to_dict() for e in equipment_list]
-        return HttpResponse(json.dumps(equipment_list), content_type="json")
+        total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
+        equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
+        return JsonResponse({
+            'page': page,
+            'total_page': total_page,
+            'posts': equipment_list
+        })
+    else:
+        return JsonResponse({'error': 'require GET'})
 
 
 '''------------provider user-------------'''
+
+
+def get_my_equipment_list(request):
+    if request.method == 'GET':
+        page = request.GET.get('page', 1)
+        username = check_username(request)
+        user = User.objects.get(username=username)
+        equipment_list = user.equipments.all()
+        equipment_list = [e.to_dict() for e in equipment_list]
+        total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
+        equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
+        return JsonResponse({
+            'page': page,
+            'total_page': total_page,
+            'posts': equipment_list
+        })
+    else:
+        return JsonResponse({'error': 'require GET'})
 
 
 def edit_equipment(request):
@@ -206,12 +235,14 @@ def edit_equipment(request):
             custom_equipment.name = count
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
+    else:
+        return JsonResponse({'error': 'require POST'})
 
 
-def add_equipment(request):
+def increase_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('id')
-        add_count = request.POST.get('addcount', 1)
+        add_count = request.POST.get('count', 1)
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
@@ -219,12 +250,14 @@ def add_equipment(request):
             custom_equipment.count += add_count
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
+    else:
+        return JsonResponse({'error': 'require POST'})
 
 
-def delete_equipment(request):
+def decrease_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('id')
-        delete_count = request.POST.get('deletecount', 1)
+        delete_count = request.POST.get('count', 1)
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
@@ -232,6 +265,8 @@ def delete_equipment(request):
             custom_equipment.count -= delete_count
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
+    else:
+        return JsonResponse({'error': 'require POST'})
 
 
 def on_shelf_equipment(request):
@@ -246,6 +281,8 @@ def on_shelf_equipment(request):
             provider=User.objects.get(username=check_username(request))
         ).save()
         return JsonResponse({'message': 'ok'})
+    else:
+        return JsonResponse({'error': 'require POST'})
 
 
 def off_shelf_equipment(request):
@@ -256,6 +293,8 @@ def off_shelf_equipment(request):
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.delete()
             return JsonResponse({'message': 'ok'})
+    else:
+        return JsonResponse({'error': 'require POST'})
 
 
 def show_borrow_apply_list(request):

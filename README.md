@@ -1,6 +1,9 @@
 # LabRentPlatform
 
 ## API
+
+### 普通用户
+
 注册
 
 ```
@@ -55,23 +58,22 @@ Response:
 }
 ```
 
-获取设备列表
-
+根据用户名`username`或设备名称`name`查找设备
 ```
-Method: Get
-
+Method: GET
 URL:api/v1/post
-
 QueryParam:
 {
  'page':1
- 'name':
+ 'name': "",
+ 'username': "",
+ 'page': 1
 }
-
 Response:
 {
- 'page'：1
-  posts:[]
+ 'page'： 1,
+ 'total_page': 1
+  posts: []
 }
 ```
 
@@ -139,56 +141,73 @@ Response:
 }
 ```
 
-设备提供者新权限
 
 查询设备
 
 ```
 Method: Get
-
 URL:api/v2/search
-
-Response:
-{
- posts:[]  #equipment information
-}
-```
-
-修改己方设备信息
-
-```
-Method: PUT
-
-URL:api/v2/edit
-
 QueryParam:
 {
- 'id':
- 'name':
- 'address':
- 'endtime':
- 'contact':
+ 'page': 1，
+ ‘username’: "",
+ 'name': ""
 }
-
 Response:
 {
- 'message'：ok
+ 'page'： 1,
+ 'total_page': 1
+  posts: []
 }
 ```
 
-增加设备
+### 设备提供者新权限
+
+查看自己的设备列表
+```
+Method: GET
+URL:api/v2/post
+QueryParam:
+{
+ 'page': 1 (selectable)
+}
+Response:
+{
+ 'page'： 1,
+ 'total_page': 1
+  posts: []
+}
+```
+
+修改设备信息
+```
+Method: GET
+URL:api/v2/edit
+QueryParam:
+{
+ 'name': "", (selectable)
+ 'username': "", (selectable)
+ 'page': 1 (selectable)
+}
+Response:
+{
+ 'page'： 1,
+ 'total_page': 1
+  posts: []
+}
+```
+
+增加设备数量
 
 ```
 Method: POST
 
-URL:api/v2/add
+URL:api/v2/increase
 
 QueryParam:
 {
- 'name':
- 'address':
- 'endtime':
- 'contact':
+ 'id': ,
+ 'count': 1,  (selectable)
 }
 
 Response:
@@ -197,18 +216,18 @@ Response:
 }
 ```
 
-删除设备
+减少设备数量
 
 ```
-Method: DELETE
+Method: POST
 
-URL:api/v2/delete
+URL:api/v2/decrease
 
 QueryParam:
 {
- 'id':
+ 'id': ,
+ 'count': 1,  (selectable)
 }
-
 Response:
 {
  'message'：ok
@@ -225,7 +244,9 @@ URL:api/v2/onshelf
 QueryParam:
 {
  'id':
- 'remarks'://上架时给出的备注消息
+ 'name':
+ 'description':
+ 'count':
 }
 
 Response:

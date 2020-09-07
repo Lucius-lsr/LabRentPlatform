@@ -10,6 +10,15 @@ class User(models.Model):
     is_verified = models.BooleanField(default=False, verbose_name="是否激活")
     is_provider = models.BooleanField(default=False, verbose_name="是否可以提供设备")
 
+    def to_dict(self):
+        return {
+            'username': self.username,
+            'email': self.email,
+            'password': self.password,
+            'is_verified': self.is_verified,
+            'is_provider': self.is_provider
+        }
+
     def __str__(self):
         return self.username
 
@@ -88,5 +97,5 @@ class Equipment(models.Model):
             'name': self.name,
             'description': self.description,
             'count': self.count,
-            'provider': self.provider
+            'provider': self.provider.to_dict()
         }
