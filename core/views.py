@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import make_password, check_password
 from core.models import *
 from core.utils.email_helper import send_email_code
+from core.utils.session_helper import check_username
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from datetime import datetime
@@ -138,22 +139,27 @@ def logout(request):
 
 
 def show_equipment(request):
+    username = check_username(request)
     pass
 
 
 def borrow_apply(request):
+    username = check_username(request)
     pass
 
 
 def get_borrow_apply_list(request):
+    username = check_username(request)
     pass
 
 
 def get_borrow_list(request):
+    username = check_username(request)
     pass
 
 
 def upgrade_apply(request):
+    username = check_username(request)
     pass
 
 
