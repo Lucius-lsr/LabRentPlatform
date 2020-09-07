@@ -1,9 +1,6 @@
 # LabRentPlatform
 
 ## API
-
-### 普通用户
-
 注册
 
 ```
@@ -58,22 +55,23 @@ Response:
 }
 ```
 
-根据用户名`username`或设备名称`name`查找设备
+获取设备列表
+
 ```
-Method: GET
+Method: Get
+
 URL:api/v1/post
+
 QueryParam:
 {
  'page':1
- 'name': "",
- 'username': "",
- 'page': 1
+ 'name':
 }
+
 Response:
 {
- 'page'： 1,
- 'total_page': 1
-  posts: []
+ 'page'：1
+  posts:[]
 }
 ```
 
@@ -89,6 +87,7 @@ QueryParam:
  'id':
  'endtime':
  ’reason':
+ 'count':  //借多少个
 }
 
 Response:
@@ -106,7 +105,7 @@ URL:api/v1/applylist
 
 Response:
 {
- posts:[]
+ posts:[{"count": 2, "target_equipment": {"name": "GPU", "description": "is GPU", "count": 5, "provider": "1234567890"}, "end_time": "2020-09-07T15:00:00Z", "reason": "i love it", "state": 0}]
 }
 ```
 
@@ -119,7 +118,7 @@ URL:api/v1/rentlist
 
 Response:
 {
- posts:[]
+ posts:[{"count": 2, "target_equipment": {"name": "GPU", "description": "is GPU", "count": 5, "provider": "1234567890"}, "end_time": "2020-09-07T15:00:00Z"}]
 }
 ```
 
@@ -132,7 +131,7 @@ URL:api/v1/upgrade
 
 QueryParam:
 {
-  manythings to add
+  lab_info:
 }
 
 Response:
@@ -141,73 +140,35 @@ Response:
 }
 ```
 
+设备提供者新权限
 
 查询设备
 
 ```
 Method: Get
+
 URL:api/v2/search
-QueryParam:
-{
- 'page': 1，
- ‘username’: "",
- 'name': ""
-}
+
 Response:
 {
- 'page'： 1,
- 'total_page': 1
-  posts: []
+ posts:[]  #equipment information
 }
 ```
 
-### 设备提供者新权限
+修改己方设备信息
 
-查看自己的设备列表
 ```
-Method: GET
-URL:api/v2/post
-QueryParam:
-{
- 'page': 1 (selectable)
-}
-Response:
-{
- 'page'： 1,
- 'total_page': 1
-  posts: []
-}
-```
+Method: PUT
 
-修改设备信息
-```
-Method: GET
 URL:api/v2/edit
-QueryParam:
-{
- 'name': "", (selectable)
- 'username': "", (selectable)
- 'page': 1 (selectable)
-}
-Response:
-{
- 'page'： 1,
- 'total_page': 1
-  posts: []
-}
-```
-
-增加设备数量
-
-```
-Method: POST
-
-URL:api/v2/increase
 
 QueryParam:
 {
- 'id': ,
- 'count': 1,  (selectable)
+ 'id':
+ 'name':
+ 'address':
+ 'endtime':
+ 'contact':
 }
 
 Response:
@@ -216,18 +177,39 @@ Response:
 }
 ```
 
-减少设备数量
+增加设备
 
 ```
 Method: POST
 
-URL:api/v2/decrease
+URL:api/v2/add
 
 QueryParam:
 {
- 'id': ,
- 'count': 1,  (selectable)
+ 'name':
+ 'address':
+ 'endtime':
+ 'contact':
 }
+
+Response:
+{
+ 'message'：ok
+}
+```
+
+删除设备
+
+```
+Method: DELETE
+
+URL:api/v2/delete
+
+QueryParam:
+{
+ 'id':
+}
+
 Response:
 {
  'message'：ok
@@ -244,9 +226,7 @@ URL:api/v2/onshelf
 QueryParam:
 {
  'id':
- 'name':
- 'description':
- 'count':
+ 'remarks'://上架时给出的备注消息
 }
 
 Response:
