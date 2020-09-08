@@ -1,4 +1,4 @@
-注册
+1.注册
 
 ```
 Method: POST
@@ -17,7 +17,7 @@ Response:
 }
 ```
 
-登录
+2.登录
 
 ```
 Method: Patch
@@ -38,7 +38,7 @@ Response:
 }
 ```
 
-登出
+3.登出
 
 ```
 Method: Patch
@@ -51,7 +51,7 @@ Response:
 }
 ```
 
-获取设备列表
+4.获取设备列表
 
 ```
 Method: Get
@@ -71,7 +71,7 @@ Response:
 }
 ```
 
-申请租借
+5.申请租借
 
 ```
 Method: POST
@@ -92,7 +92,7 @@ Response:
 }
 ```
 
-获取申请信息列表
+6.获取申请信息列表
 
 ```
 Method: Get
@@ -110,7 +110,7 @@ Response:
 }
 ```
 
-获取租借成功列表
+7.获取租借成功列表
 
 ```
 Method: Get
@@ -128,7 +128,7 @@ Response:
 }
 ```
 
-成为设备提供者
+8.成为设备提供者
 
 ```
 Method: PUT
@@ -149,7 +149,7 @@ Response:
 
 设备提供者新权限
 
-查询设备
+9.查询设备
 
 ```
 Method: Get
@@ -167,7 +167,7 @@ Response:
 }
 ```
 
-修改己方设备信息
+10.修改己方设备信息
 
 ```
 Method: PUT
@@ -190,7 +190,7 @@ Response:
 }
 ```
 
-增加设备
+11.增加设备
 
 ```
 Method: POST
@@ -212,7 +212,7 @@ Response:
 }
 ```
 
-删除设备
+12.删除设备
 
 ```
 Method: DELETE
@@ -231,7 +231,7 @@ Response:
 }
 ```
 
-上架设备
+13.上架设备
 
 ```
 Method: POST
@@ -250,7 +250,7 @@ Response:
 }
 ```
 
-下架设备
+14.下架设备
 
 ```
 Method: DELETE
@@ -268,7 +268,7 @@ Response:
 }
 ```
 
-查看所有的租借申请
+15.查看所有的租借申请
 
 ```
 Method: Get
@@ -286,7 +286,7 @@ Response:
 }
 ```
 
-是否同意申请
+16.是否同意申请
 
 ```
 Method: PUT
@@ -305,7 +305,7 @@ Response:
 }
 ```
 
-查看所有已借出设备历史信息
+17.查看所有已借出设备历史信息
 
 ```
 Method: Get
@@ -323,7 +323,7 @@ Response:
 }
 ```
 
-确认归还
+18.确认归还
 
 ```
 Method: PUT
