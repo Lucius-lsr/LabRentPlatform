@@ -17,9 +17,7 @@ from .models import User, BorrowApply, OnShelfApply, UpgradeApply, Equipment
 from django.http import HttpResponse
 import json
 
-
 PAGE_SIZE = 10
-
 
 '''------------normal user-------------'''
 
@@ -205,6 +203,7 @@ def borrow_apply(request):
         return HttpResponse('ok')
     except django.core.exceptions.ValidationError:
         return JsonResponse({'error': 'format error'})
+
 
 @csrf_exempt
 def get_borrow_apply_list(request):
@@ -429,8 +428,25 @@ def show_borrow_apply_list(request):
         return JsonResponse({'error': 'require POST'})
 
 
+@csrf_exempt
 def reply_borrow_apply(request):
-    pass
+    data = QueryDict(request.body)
+    id = data.get('id')
+    flag = data.get('flag')
+    if not id or not flag:
+        return JsonResponse({'error': 'invalid parameters'})
+    apply = BorrowApply.objects.filter(id=id)
+    if not apply:
+        return JsonResponse({'error': 'apply does not exist'})
+    apply = apply.first()
+    if apply.state == 0:
+        if flag != 1 and flag != 2:
+            return JsonResponse({'error': 'wrong flag'})
+        apply.state = flag
+        apply.save()
+        return JsonResponse({'ok': flag})
+    else:
+        return JsonResponse({'error': 'can not agree/disagree this apply'})
 
 
 def get_lend_list(request):

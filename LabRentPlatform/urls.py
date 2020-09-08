@@ -18,7 +18,7 @@ from django.urls import path, re_path
 from core import views
 
 urlpatterns = [
-    path('admin', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('api/v1/register', views.register),
     re_path(r'^users/user_verify/(.+)$', views.user_verify),
     path('api/v1/login', views.login),
@@ -35,5 +35,6 @@ urlpatterns = [
     path('api/v2/onshelf', views.on_shelf_equipment),
     path('api/v2/offshelf', views.off_shelf_equipment),
     path('api/v2/borrowapplylist', views.get_borrow_apply_list),
+    path('api/v2/whether/agree', views.reply_borrow_apply),
 
 ]

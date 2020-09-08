@@ -69,6 +69,8 @@ class BorrowApply(models.Model):
     count = models.IntegerField(default=0)  # new: borrow number
     target_equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE,
                                          related_name='equipment_apply_set')  # 租借设备如果被删则设为空
+    owner = models.ForeignKey('User', on_delete=models.CASCADE,
+                                         related_name='owner_apply_set')  # 所有者如果被删则设为空
     end_time = models.DateTimeField()  # 结束时间
     reason = models.TextField(max_length=200)
     state = models.IntegerField(choices=((0, 'pending'), (1, 'accept'), (2, 'refuse'), (3, 'returned')),
@@ -85,7 +87,7 @@ class BorrowApply(models.Model):
         }
 
     def __str__(self):
-        return '%s租赁%s' % (self.borrower.username, self.target_equipment.name)
+        return '%d: %s租赁%s' % (self.id, self.borrower.username, self.target_equipment.name)
 
     class Meta:
         verbose_name = '租借申请'
@@ -117,5 +119,3 @@ class UpgradeApply(models.Model):
     class Meta:
         verbose_name = '成为提供者申请'
         verbose_name_plural = verbose_name
-
-
