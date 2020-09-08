@@ -331,6 +331,7 @@ def get_my_equipment_list(request):
         return JsonResponse({'error': 'require GET'})
 
 
+@csrf_exempt
 def edit_equipment(request):
     if request.method == 'PUT':
         data = QueryDict(request.body)
@@ -351,6 +352,7 @@ def edit_equipment(request):
         return JsonResponse({'error': 'require PUT'})
 
 
+@csrf_exempt
 def increase_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('id')
@@ -366,6 +368,7 @@ def increase_equipment(request):
         return JsonResponse({'error': 'require POST'})
 
 
+@csrf_exempt
 def decrease_equipment(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('id')
@@ -381,6 +384,7 @@ def decrease_equipment(request):
         return JsonResponse({'error': 'require POST'})
 
 
+@csrf_exempt
 def on_shelf_equipment(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -397,6 +401,7 @@ def on_shelf_equipment(request):
         return JsonResponse({'error': 'require POST'})
 
 
+@csrf_exempt
 def off_shelf_equipment(request):
     if request.method == 'DELETE':
         data = QueryDict(request.body)
