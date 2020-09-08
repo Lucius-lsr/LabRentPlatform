@@ -11,14 +11,14 @@ Class-based views
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+    2. Add a URL to urlpatterns:  path('blog', include('blog.urls'))
 """
 from django.contrib import admin
 from django.urls import path, re_path
 from core import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin', admin.site.urls),
     path('api/v1/register', views.register),
     re_path(r'^users/user_verify/(.+)$', views.user_verify),
     path('api/v1/login', views.login),
@@ -27,4 +27,13 @@ urlpatterns = [
     path('api/v1/applylist', views.get_borrow_apply_list),
     path('api/v1/rentlist', views.get_borrow_list),
     path('api/v1/upgrade', views.upgrade_apply),
+    path('api/v1/search)', views.search_equipment),
+    path('api/v2/equipmentlist', views.get_my_equipment_list),
+    path('api/v2/edit', views.edit_equipment),
+    path('api/v2/increase', views.increase_equipment),
+    path('api/v2/decrease', views.decrease_equipment),
+    path('api/v2/onshelf', views.on_shelf_equipment),
+    path('api/v2/offshelf', views.off_shelf_equipment),
+    path('api/v2/borrowapplylist', views.get_borrow_apply_list),
+
 ]

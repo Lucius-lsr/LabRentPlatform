@@ -76,9 +76,9 @@ class BorrowApply(models.Model):
 
     def to_dict(self):
         return {
-            'borrower': self.borrower.to_dict(),
+            'borrower': self.borrower.username,
             'count': self.count,
-            'target_equipment': self.target_equipment.to_dict(),
+            'target_equipment': self.target_equipment.name,
             'endtime': self.end_time,
             'reason': self.reason,
             'state': self.state

@@ -333,11 +333,12 @@ def get_my_equipment_list(request):
 
 
 def edit_equipment(request):
-    if request.method == 'POST':
-        equipment_id = request.POST.get('id')
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-        count = request.POST.get('count')
+    if request.method == 'PUT':
+        data = QueryDict(request.body)
+        equipment_id = data.get('id')
+        name = data.get('name')
+        description = data.get('description')
+        count = data.get('count')
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
@@ -348,7 +349,7 @@ def edit_equipment(request):
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
     else:
-        return JsonResponse({'error': 'require POST'})
+        return JsonResponse({'error': 'require PUT'})
 
 
 def increase_equipment(request):
@@ -398,15 +399,16 @@ def on_shelf_equipment(request):
 
 
 def off_shelf_equipment(request):
-    if request.method == 'POST':
-        equipment_id = request.POST.get('id')
+    if request.method == 'DELETE':
+        data = QueryDict(request.body)
+        equipment_id = data.get('equipment_id')
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.delete()
             return JsonResponse({'message': 'ok'})
     else:
-        return JsonResponse({'error': 'require POST'})
+        return JsonResponse({'error': 'require DELETE'})
 
 
 def show_borrow_apply_list(request):
