@@ -14,7 +14,6 @@ import uuid
 from django.http import QueryDict
 
 from .models import User, BorrowApply, OnShelfApply, UpgradeApply, Equipment
-from django.http import HttpResponse
 import json
 
 PAGE_SIZE = 10
@@ -108,6 +107,8 @@ def login(request):
     password = request.POST.get('password')
     if not check_password(password, password_stored):
         return JsonResponse({'error': 'password is wrong'})
+    if not user.is_verified:
+        return JsonResponse({'error': 'have not be verified'})
 
     # has logged in
     session_username = check_username(request)
@@ -200,7 +201,7 @@ def borrow_apply(request):
     try:
         BorrowApply.objects.create(borrower=borrower, count=count, target_equipment=target, owner=target.provider,
                                    end_time=end_time, reason=reason, state=0)
-        return HttpResponse('ok')
+        return JsonResponse({'message': 'ok'})
     except django.core.exceptions.ValidationError:
         return JsonResponse({'error': 'format error'})
 
@@ -278,10 +279,10 @@ def upgrade_apply(request):
             previous_apply.lab_info = lab_info
             previous_apply.state = 0
             previous_apply.save()
-            return HttpResponse('modify successfully')
+            return JsonResponse({'message': 'modify apply'})
         else:
             UpgradeApply.objects.create(applicant=user, lab_info=lab_info, state=0)
-            return HttpResponse('ok')
+            return JsonResponse({'message': 'ok'})
     except (TypeError, ValueError):
         return JsonResponse({'error': 'fail to apply'})
 
@@ -430,6 +431,8 @@ def show_borrow_apply_list(request):
 
 @csrf_exempt
 def reply_borrow_apply(request):
+    if request.method != 'PUT':
+        return JsonResponse({'error': 'require PUT'})
     data = QueryDict(request.body)
     id = data.get('id')
     flag = data.get('flag')
@@ -449,9 +452,41 @@ def reply_borrow_apply(request):
         return JsonResponse({'error': 'can not agree/disagree this apply'})
 
 
+@csrf_exempt
 def get_lend_list(request):
-    pass
+    if request.method != 'GET':
+        return JsonResponse({'error': 'require GET'})
+    username = check_username(request)
+    if not username:
+        return JsonResponse({'error': 'please login'})
+    lender = User.objects.filter(username=username)
+    if not lender:
+        return JsonResponse({'error': 'please login'})
+    lender = lender.first()
+
+    apply_list = lender.owner_apply_set.filter(Q(state=1) | Q(state=3))
+    ret = []
+    for apply in apply_list:
+        ret.append(apply.to_dict())
+
+    return JsonResponse({'posts': ret})
 
 
+@csrf_exempt
 def confirm_return(request):
-    pass
+    if request.method != 'PUT':
+        return JsonResponse({'error': 'require PUT'})
+    data = QueryDict(request.body)
+    id = data.get('id')
+    if not id:
+        return JsonResponse({'error': 'invalid parameters'})
+    apply = BorrowApply.objects.filter(id=id)
+    if not apply:
+        return JsonResponse({'error': 'apply does not exist'})
+    apply = apply.first()
+    if apply.state == 1:
+        apply.state = 3
+        apply.save()
+        return JsonResponse({'message': 'ok'})
+    else:
+        return JsonResponse({'error': 'not in the lease'})
