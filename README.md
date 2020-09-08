@@ -372,8 +372,8 @@ URL:api/v2/whether/agree
 
 QueryParam:
 {
- 'id':
- 'flag':
+ 'id':     //BorrowAplly的id
+ 'flag':   //1同意 2拒绝
 }
 
 Response:
@@ -391,7 +391,7 @@ URL:api/v2/searchrent
 
 Response:
 {
- 'posts':[]
+ ‘posts’: [{"borrower": "li", "count": 2, "target_equipment": "computer", "endtime": "2020-09-22T14:51:33Z", "reason": "I need it", "state": 3}]
 }
 ```
 
