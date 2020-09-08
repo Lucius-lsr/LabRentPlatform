@@ -399,7 +399,7 @@ def on_shelf_equipment(request):
 
 def off_shelf_equipment(request):
     if request.method == 'POST':
-        equipment_id = request.POST.get('id')
+        equipment_id = request.POST.get('equipment_id')
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
         if custom_equipment and custom_equipment.provider.username == username:
