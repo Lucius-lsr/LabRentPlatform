@@ -8,16 +8,16 @@ Method: POST
 
 URL:api/v1/register
 
-Request:
+Body:
 {
- 'username': '',   // 必须是10位数学号
- ‘email’:  '',     // 只在注册的时候用于验证
+ 'username': '',   
+ ‘email’:  '',     // 任何邮箱均可
  'password': ''
 }
 
 Response:
 {
- message:'ok'
+ '验证已重新发送，请尽快前往您的邮箱激活，否则无法登陆'
 }
 ```
 
@@ -28,7 +28,7 @@ Method: Patch
 
 URL:api/v1/login
 
-Request:
+Body:
 {
  'username': '',
  'password': ''
@@ -65,14 +65,14 @@ URL:api/v1/post
 QueryParam:
 {
  'page':1
- 'total_page':
  'name':    //空则搜索全部，否则部分匹配
 }
 
 Response:
 {
- 'page'：1
-  posts:[]
+"page": 1, 
+"total_page": 1, 
+"posts": [{"id": 1, "name": "gpu", "description": "123gpu", "count": 10, "provider": "li"}]
 }
 ```
 
@@ -83,7 +83,7 @@ Method: POST
 
 URL:api/v1/apply
 
-QueryParam:
+Body:
 {
  'id':
  'endtime':
@@ -106,7 +106,17 @@ URL:api/v1/applylist
 
 Response:
 {
- posts:[{"count": 2, "target_equipment": {'id':1, "name": "GPU", "description": "is GPU", "count": 5, "provider": "1234567890"}, "end_time": "2020-09-07T15:00:00Z", "reason": "i love it", "state": 0}]
+ posts:[{
+     "count": 2, 
+     "target_equipment": {
+         'id':1, 
+         "name": "GPU", 
+         "description": "is GPU", 
+         "count": 5, 
+         "provider":   "1234567890"}, 
+     "end_time": "2020-09-07T15:00:00Z", 
+     "reason": "i love it", 
+     "state": 0}] // (0, 'pending'), (1, 'accept'), (2, 'refuse'), (3, 'returned')
 }
 ```
 
@@ -115,11 +125,18 @@ Response:
 ```
 Method: Get
 
-URL:api/v1/rentlist
+URL:api/v1/borrowlist
 
 Response:
 {
- posts:[{"count": 2, "target_equipment": {'id':1, "name": "GPU", "description": "is GPU", "count": 5, "provider": "1234567890"}, "end_time": "2020-09-07T15:00:00Z"}]
+     posts:[{
+         "count": 2, 
+         "target_equipment": {
+             'id':1, "name": 
+             "GPU", "description": "is GPU", 
+             "count": 5, "provider": "1234567890"}, 
+             "end_time": "2020-09-07T15:00:00Z"
+          }]
 }
 ```
 
@@ -130,7 +147,7 @@ Method: PUT
 
 URL:api/v1/upgrade
 
-QueryParam:
+Body:
 {
   lab_info:
 }
@@ -140,8 +157,6 @@ Response:
  message:'ok'
 }
 ```
-
-设备提供者新权限
 
 查询设备
 
@@ -155,7 +170,7 @@ QueryParam:
 {
  'username': "",(selectable)
  'name': "",(selectable)
- 'page': 1, (selectable)
+ 'page': 1, 
 }
 
 Response:
@@ -173,9 +188,9 @@ Response:
 }
 ```
 
-修改己方设备信息
+## 设备提供者新权限
 
-查询设备列表
+查询己方设备列表
 
 ```
 Method: GET
@@ -193,6 +208,7 @@ Response:
  'total_page': ,
  'posts': [
     {
+        'id':
         'name': ,
         'description': ,
         'count': ,
@@ -202,7 +218,6 @@ Response:
 }
 
 ```
-Method: PUT
 
 
 修改己方设备信息
@@ -355,11 +370,26 @@ Response:
 ```
 Method: Get
 
-URL:api/v2/searchrent
+URL:api/v2/lendlist
 
 Response:
 {
- ‘posts’: [{'id':1, "borrower": "li", "count": 2, "target_equipment": "computer", "endtime": "2020-09-22T14:51:33Z", "reason": "I need it", "state": 3}]
+"posts":[
+{
+    "id": 2,
+    "borrower": "li",
+    "count": 2,
+    "target_equipment":{
+        "id": 2, 
+        "name": "电脑", 
+        "description": "123电脑", 
+        "count": 10
+    },
+    "endtime": "2020-09-22T14:51:33Z",
+    "reason": "没有理由",
+    "state": 3
+}
+]
 }
 ```
 
