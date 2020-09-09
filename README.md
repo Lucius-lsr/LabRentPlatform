@@ -418,15 +418,14 @@ Response:
 ```
 Method: GET
 
-URL:api/v2/notification
+URL:api/v1/notification
 
 Response:
 {
  notifications:[
      {
          'type':'borrow apply',  // 或upgrade apply或onshelf apply
-         'unread': true
-         'state': 'accept',     // accept,refuse
+         'state': 1,     // 1 accept, 2 refuse
          'apply':  // 通知对象的具体信息，可以是租借申请/升级申请/上架申请
          {
                 'id':1, 
