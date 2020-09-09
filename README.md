@@ -38,7 +38,6 @@ Response:
 {
  'username': '',
  'isprovider':'',
- 'jwt': ''
 }
 ```
 
