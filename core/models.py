@@ -12,6 +12,7 @@ class User(models.Model):
 
     def to_dict(self):
         return {
+            'id': self.id,
             'username': self.username,
             'email': self.email,
             'password': self.password,
@@ -50,6 +51,7 @@ class Equipment(models.Model):
 
     def to_dict(self):
         return {
+            'id': self.id,
             'name': self.name,
             'description': self.description,
             'count': self.count,
@@ -70,7 +72,7 @@ class BorrowApply(models.Model):
     target_equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE,
                                          related_name='equipment_apply_set')  # 租借设备如果被删则设为空
     owner = models.ForeignKey('User', on_delete=models.CASCADE,
-                                         related_name='owner_apply_set')  # 所有者如果被删则设为空
+                              related_name='owner_apply_set')  # 所有者如果被删则设为空
     end_time = models.DateTimeField()  # 结束时间
     reason = models.TextField(max_length=200)
     state = models.IntegerField(choices=((0, 'pending'), (1, 'accept'), (2, 'refuse'), (3, 'returned')),
@@ -78,6 +80,7 @@ class BorrowApply(models.Model):
 
     def to_dict(self):
         return {
+            'id': self.id,
             'borrower': self.borrower.username,
             'count': self.count,
             'target_equipment': self.target_equipment.name,

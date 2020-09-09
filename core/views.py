@@ -377,7 +377,7 @@ def increase_equipment(request):
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
         if custom_equipment and custom_equipment.provider.username == username:
-            custom_equipment.count += add_count
+            custom_equipment.count += int(add_count)
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
     else:
@@ -393,7 +393,7 @@ def decrease_equipment(request):
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
         if custom_equipment and custom_equipment.provider.username == username:
-            custom_equipment.count -= delete_count
+            custom_equipment.count -= int(delete_count)
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
     else:
@@ -463,10 +463,17 @@ def reply_borrow_apply(request):
         return JsonResponse({'error': 'apply does not exist'})
     apply = apply.first()
     if apply.state == 0:
-        if flag != 1 and flag != 2:
+        if str(flag) != '1' and str(flag) != '2':
             return JsonResponse({'error': 'wrong flag'})
         apply.state = flag
         apply.save()
+        if str(flag) == '1':  # Agree
+            apply.target_equipment.count -= apply.count
+            apply.target_equipment.save()
+            print("===============")
+            print(apply.target_equipment.count)
+            print(apply.count)
+
         return JsonResponse({'ok': flag})
     else:
         return JsonResponse({'error': 'can not agree/disagree this apply'})

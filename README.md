@@ -164,6 +164,7 @@ Response:
  'total_page': ,
  'posts': [
     {
+        'id': ,
         'name': ,
         'description': ,
         'count': ,
@@ -193,6 +194,7 @@ Response:
  'total_page': ,
  'posts': [
     {
+        'id': ,
         'name': ,
         'description': ,
         'count': ,
