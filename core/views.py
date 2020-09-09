@@ -94,13 +94,8 @@ def user_verify(request, code):
 
 @csrf_exempt
 def login(request):
-<<<<<<< HEAD
-    if request.method != 'POST':
-        return JsonResponse({'error': 'require POST'}, status=400)
-=======
     if request.method != 'PATCH':
-        return JsonResponse({'error': 'require PATCH'})
->>>>>>> 345c006dddad9a0766926a90c3e09639b74b2170
+        return JsonResponse({'error': 'require PATCH'}, status=400)
 
     data = QueryDict(request.body)
 
@@ -145,13 +140,8 @@ def login(request):
 
 @csrf_exempt
 def logout(request):
-<<<<<<< HEAD
-    if request.method != 'POST':
-        return JsonResponse({'error': 'require POST'}, status=400)
-=======
     if request.method != 'PATCH':
-        return JsonResponse({'error': 'require PATCH'})
->>>>>>> 345c006dddad9a0766926a90c3e09639b74b2170
+        return JsonResponse({'error': 'require PATCH'}, status=400)
 
     session_id = request.COOKIES.get('session_id', '')  # 通过session_id在数据库中找用户名
     if session_id:
@@ -479,36 +469,18 @@ def reply_borrow_apply(request):
     if not apply:
         return JsonResponse({'error': 'apply does not exist'}, status=400)
     apply = apply.first()
-<<<<<<< HEAD
-    if apply.state == 0:
-        if str(flag) != '1' and str(flag) != '2':
-            return JsonResponse({'error': 'wrong flag'}, status=400)
-        apply.state = flag
-        apply.save()
-        if str(flag) == '1':  # Agree
-            apply.target_equipment.count -= apply.count
-            apply.target_equipment.save()
-            print("===============")
-            print(apply.target_equipment.count)
-            print(apply.count)
-
-        return JsonResponse({'ok': flag})
-    else:
-        return JsonResponse({'error': 'can not agree/disagree this apply'}, status=400)
-=======
     if apply.state != 0:
-        return JsonResponse({'error': 'can not accept/refuse this apply'})
+        return JsonResponse({'error': 'can not accept/refuse this apply'}, status=400)
     if flag != 1 and flag != 2:
-        return JsonResponse({'error': 'wrong flag'})
+        return JsonResponse({'error': 'wrong flag'}, status=400)
     if apply.target_equipment.count < apply.count:
-        return JsonResponse({'error': 'not enough'})
+        return JsonResponse({'error': 'not enough'}, status=400)
     if flag == 1:
         apply.target_equipment.count -= apply.count
         apply.target_equipment.save()
     apply.state = flag
     apply.save()
     return JsonResponse({'message': 'ok'})
->>>>>>> 345c006dddad9a0766926a90c3e09639b74b2170
 
 
 @csrf_exempt
