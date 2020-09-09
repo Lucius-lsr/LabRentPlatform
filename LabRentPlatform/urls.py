@@ -19,15 +19,20 @@ from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # 普通用户
     path('api/v1/register', views.register),
     re_path(r'^users/user_verify/(.+)$', views.user_verify),
     path('api/v1/login', views.login),
     path('api/v1/logout', views.logout),
+    path('api/v1/post', views.show_all_equipments),
     path('api/v1/apply', views.borrow_apply),
     path('api/v1/applylist', views.get_borrow_apply_list),
     path('api/v1/rentlist', views.get_borrow_list),
     path('api/v1/upgrade', views.upgrade_apply),
     path('api/v1/search)', views.search_equipment),
+
+    # 提供者
     path('api/v2/equipmentlist', views.get_my_equipment_list),
     path('api/v2/edit', views.edit_equipment),
     path('api/v2/increase', views.increase_equipment),

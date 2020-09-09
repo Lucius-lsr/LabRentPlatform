@@ -152,20 +152,26 @@ def logout(request):
     return JsonResponse({'error': 'no valid session'})
 
 
-# Get equipment detail by: id OR name
 @csrf_exempt
-def show_equipment_detail(request):
-    if request.method == 'GET':
-        equipment_id = request.GET.get('equipment_id', "")
-        name = request.GET.get('name', "")
-        custom_equipment = None
-        if equipment_id:
-            custom_equipment = Equipment.objects.get(id=equipment_id)
-        elif name:
-            custom_equipment = Equipment.objects.get(name=name)
-        return JsonResponse(custom_equipment.to_dict())
-    else:
+def show_all_equipments(request):
+    if request.method != 'GET':
         return JsonResponse({'error': 'require GET'})
+
+    try:
+        page = int(request.GET.get('page', ""))
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'invalid parameters'})
+
+    name = request.GET.get('name', "")
+
+    equipment_list = Equipment.objects.filter(name__contains=name)
+
+    total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
+    equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
+
+    ret_list = [e.to_dict() for e in equipment_list]
+
+    return JsonResponse({'page': page, 'total_page': total_page, 'posts': ret_list})
 
 
 @csrf_exempt
