@@ -234,6 +234,7 @@ URL:api/v2/add
 
 QueryParam:
 {
+ ‘id’: 
  'count': 1,(selectable)
 }
 
@@ -252,6 +253,7 @@ URL:api/v2/delete
 
 QueryParam:
 {
+ ‘id’: 
  'count': 1,(selectable)
 }
 
