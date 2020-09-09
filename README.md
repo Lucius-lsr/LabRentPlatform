@@ -65,7 +65,8 @@ URL:api/v1/post
 QueryParam:
 {
  'page':1
- 'name':
+ 'total_page':
+ 'name':    //空则搜索全部，否则部分匹配
 }
 
 Response:
@@ -105,7 +106,7 @@ URL:api/v1/applylist
 
 Response:
 {
- posts:[{"count": 2, "target_equipment": {"name": "GPU", "description": "is GPU", "count": 5, "provider": "1234567890"}, "end_time": "2020-09-07T15:00:00Z", "reason": "i love it", "state": 0}]
+ posts:[{"count": 2, "target_equipment": {'id':1, "name": "GPU", "description": "is GPU", "count": 5, "provider": "1234567890"}, "end_time": "2020-09-07T15:00:00Z", "reason": "i love it", "state": 0}]
 }
 ```
 
@@ -118,7 +119,7 @@ URL:api/v1/rentlist
 
 Response:
 {
- posts:[{"count": 2, "target_equipment": {"name": "GPU", "description": "is GPU", "count": 5, "provider": "1234567890"}, "end_time": "2020-09-07T15:00:00Z"}]
+ posts:[{"count": 2, "target_equipment": {'id':1, "name": "GPU", "description": "is GPU", "count": 5, "provider": "1234567890"}, "end_time": "2020-09-07T15:00:00Z"}]
 }
 ```
 
@@ -318,6 +319,7 @@ Response:
  'posts':[{ 'page': ,
             'total_page': ,
             'borrow_apply_list': [{
+                'id':1, 
                 'borrower': "",
                 'count': ,
                 'target_equipment': "",
@@ -357,7 +359,7 @@ URL:api/v2/searchrent
 
 Response:
 {
- ‘posts’: [{"borrower": "li", "count": 2, "target_equipment": "computer", "endtime": "2020-09-22T14:51:33Z", "reason": "I need it", "state": 3}]
+ ‘posts’: [{'id':1, "borrower": "li", "count": 2, "target_equipment": "computer", "endtime": "2020-09-22T14:51:33Z", "reason": "I need it", "state": 3}]
 }
 ```
 
