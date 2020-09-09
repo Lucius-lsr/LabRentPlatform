@@ -289,7 +289,8 @@ URL:api/v2/onshelf
 QueryParam:
 {
  'name': ,
- 'description': ,
+ 'description': ,   // 设备描述
+ 'remarks':   // 上架理由
  'count': 
 }
 
