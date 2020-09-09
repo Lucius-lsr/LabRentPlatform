@@ -97,7 +97,7 @@ class BorrowApply(models.Model):
 
 class OnShelfApply(models.Model):
     count = models.IntegerField(default=0, verbose_name='数量')  # new: count of equipments
-    target_equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, verbose_name='设备')  # 租借设备如果被删则设为空
+    target_equipment = models.OneToOneField(Equipment, on_delete=models.CASCADE, verbose_name='设备')  # 租借设备如果被删则设为空
     remarks = models.TextField(max_length=200, verbose_name='上架理由')
     state = models.IntegerField(choices=((0, '等待确认'), (1, '已接收'), (2, '已拒绝')), verbose_name='申请状态')
 
