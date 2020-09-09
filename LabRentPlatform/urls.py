@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/v1/applylist', views.get_borrow_apply_list),
     path('api/v1/rentlist', views.get_borrow_list),
     path('api/v1/upgrade', views.upgrade_apply),
-    path('api/v1/search)', views.search_equipment),
+    path('api/v1/search', views.search_equipment),
 
     # 提供者
     path('api/v2/equipmentlist', views.get_my_equipment_list),

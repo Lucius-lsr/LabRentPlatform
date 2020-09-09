@@ -299,10 +299,16 @@ def search_equipment(request):
         equipment_list = []
         username = request.GET.get('username', "")
         equipment_name = request.GET.get('name', "")
-        page = request.GET.get('page', 1)
+        try:
+            page = int(request.GET.get('page', ""))
+        except (ValueError, TypeError):
+            return JsonResponse({'error': 'invalid parameters'})
         if username:
-            user = User.objects.get(username=username)
-            equipment_list = user.equipments.all()
+            try:
+                user = User.objects.get(username=username)
+                equipment_list = user.equipments.all()
+            except:
+                return JsonResponse({'error': 'no this user'})
         elif equipment_name:
             equipment_list = Equipment.objects.filter(name__contains=equipment_name)
         equipment_list = [e.to_dict() for e in equipment_list]
@@ -322,7 +328,10 @@ def search_equipment(request):
 
 def get_my_equipment_list(request):
     if request.method == 'GET':
-        page = request.GET.get('page', 1)
+        try:
+            page = int(request.GET.get('page', ""))
+        except (ValueError, TypeError):
+            return JsonResponse({'error': 'invalid parameters'})
         username = check_username(request)
         user = User.objects.get(username=username)
         equipment_list = user.equipments.all()
