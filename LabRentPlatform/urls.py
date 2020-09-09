@@ -47,4 +47,5 @@ urlpatterns = [
     # 扩展内容
     path('api/v1/notification', views.get_notification),
 
+
 ]
