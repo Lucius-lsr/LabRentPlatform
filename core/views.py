@@ -166,7 +166,7 @@ def show_all_equipments(request):
 
     name = request.GET.get('name', "")
 
-    equipment_list = Equipment.objects.filter(name__contains=name)
+    equipment_list = Equipment.objects.filter(name__contains=name, onshelfapply__state=1)  # 上架商品才能查看
 
     total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
     equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
@@ -199,7 +199,7 @@ def borrow_apply(request):
     if not target_id or not end_time or count <= 0:
         return JsonResponse({'error': 'invalid parameters'}, status=400)
 
-    target = Equipment.objects.filter(id=target_id)
+    target = Equipment.objects.filter(id=target_id, onshelfapply__state=1)  # 上架商品才能申请
     if not target:
         return JsonResponse({'error': 'invalid id'}, status=400)
     target = target.first()
@@ -303,7 +303,7 @@ def search_equipment(request):
             except:
                 return JsonResponse({'error': 'no this user'}, status=400)
         elif equipment_name:
-            equipment_list = Equipment.objects.filter(name__contains=equipment_name)
+            equipment_list = Equipment.objects.filter(name__contains=equipment_name, onshelfapply__state=1)  # 上架商品才能被搜索
         equipment_list = [e.to_dict() for e in equipment_list]
         total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
         equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
@@ -403,19 +403,27 @@ def decrease_equipment(request):
 
 @csrf_exempt
 def on_shelf_equipment(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-        count = request.POST.get('count')
-        Equipment(
-            name=name,
-            description=description,
-            count=count,
-            provider=User.objects.get(username=check_username(request))
-        ).save()
-        return JsonResponse({'message': 'ok'})
-    else:
+    if not request.method == 'POST':
         return JsonResponse({'error': 'require POST'}, status=400)
+    name = request.POST.get('name')
+    description = request.POST.get('description')
+    remarks = request.POST.get('remarks')
+    if not name or not description or not remarks:
+        return JsonResponse({'error': 'invalid parameters'}, status=400)
+    try:
+        count = int(request.POST.get('count'))
+    except (TypeError, ValueError):
+        return JsonResponse({'error': 'invalid parameters'}, status=400)
+    new_equipment = Equipment(
+        name=name,
+        description=description,
+        count=count,
+        provider=User.objects.get(username=check_username(request))
+    )
+    new_equipment.save()
+    apply = OnShelfApply(target_equipment=new_equipment, remarks=remarks, state=0)
+    apply.save()
+    return JsonResponse({'message': 'ok'})
 
 
 @csrf_exempt

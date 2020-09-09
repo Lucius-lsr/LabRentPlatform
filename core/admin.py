@@ -14,10 +14,14 @@ class BorrowApplyAdmin(admin.ModelAdmin):
     list_display = ('id', 'borrower', 'target_equipment', 'count', 'owner', 'end_time', 'state')
 
 
+class OnShelfApplyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'target_equipment', 'state')
+
+
 # Register your models here.
 admin.site.register(User, UserAdmin)
 admin.site.register(EmailVerifyCode)
 admin.site.register(Equipment, EquipmentAdmin)
 admin.site.register(BorrowApply, BorrowApplyAdmin)
 admin.site.register(UpgradeApply)
-admin.site.register(OnShelfApply)
+admin.site.register(OnShelfApply, OnShelfApplyAdmin)
