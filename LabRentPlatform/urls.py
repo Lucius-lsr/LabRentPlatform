@@ -31,6 +31,9 @@ urlpatterns = [
     path('api/v1/borrowlist', views.get_borrow_list),
     path('api/v1/upgrade', views.upgrade_apply),
     path('api/v1/search', views.search_equipment),
+    path('api/v1/sendmessage', views.send_message),
+    path('api/v1/getmessages', views.get_messages),
+    path('api/v1/readmessages', views.read_messages),
 
     # 提供者
     path('api/v2/equipmentlist', views.get_my_equipment_list),

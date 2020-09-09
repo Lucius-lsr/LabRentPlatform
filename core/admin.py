@@ -40,6 +40,10 @@ class UpgradeApplyAdmin(admin.ModelAdmin):
     list_editable = ['state']
 
 
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'sender', 'receiver', 'content', 'is_read')
+
+
 # Register your models here.
 admin.site.register(User, UserAdmin)
 # admin.site.register(EmailVerifyCode)
@@ -47,5 +51,6 @@ admin.site.register(Equipment, EquipmentAdmin)
 admin.site.register(BorrowApply, BorrowApplyAdmin)
 admin.site.register(UpgradeApply, UpgradeApplyAdmin)
 admin.site.register(OnShelfApply, OnShelfApplyAdmin)
+admin.site.register(Message, MessageAdmin)
 admin.site.site_title = '设备租赁智能管理平台'
 admin.site.site_header = '后台管理系统登录'
