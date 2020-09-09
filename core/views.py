@@ -370,7 +370,7 @@ def increase_equipment(request):
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
         if custom_equipment and custom_equipment.provider.username == username:
-            custom_equipment.count += add_count
+            custom_equipment.count += int(add_count)
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
     else:
@@ -386,7 +386,7 @@ def decrease_equipment(request):
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
         if custom_equipment and custom_equipment.provider.username == username:
-            custom_equipment.count -= delete_count
+            custom_equipment.count -= int(delete_count)
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
     else:

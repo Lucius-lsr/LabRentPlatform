@@ -12,6 +12,7 @@ class User(models.Model):
 
     def to_dict(self):
         return {
+            'id': self.id,
             'username': self.username,
             'email': self.email,
             'password': self.password,
@@ -74,7 +75,6 @@ class BorrowApply(models.Model):
     end_time = models.DateTimeField(verbose_name='归还时间')  # 归还时间
     reason = models.TextField(max_length=200, verbose_name='申请理由')
     state = models.IntegerField(choices=((0, '等待确认'), (1, '已接受'), (2, '已拒绝'), (3, '已归还')),
-                                verbose_name='申请状态')
 
     def to_dict(self):
         return {
