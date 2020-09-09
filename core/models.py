@@ -76,6 +76,8 @@ class BorrowApply(models.Model):
     reason = models.TextField(max_length=200, verbose_name='申请理由')
     state = models.IntegerField(choices=((0, '等待确认'), (1, '已租借'), (2, '已拒绝'), (3, '已归还')), verbose_name='租借状态')
 
+    unread = models.BooleanField(default=True)
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -100,6 +102,16 @@ class OnShelfApply(models.Model):
     remarks = models.TextField(max_length=200, verbose_name='上架理由')
     state = models.IntegerField(choices=((0, '等待确认'), (1, '已上架'), (2, '已拒绝')), verbose_name='上架状态')
 
+    unread = models.BooleanField(default=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'target_equipment': self.target_equipment.to_dict(),
+            'remarks': self.remarks,
+            'state': self.state
+        }
+
     def __str__(self):
         dic = {0: '等待确认', 1: '已上架', 2: '已拒绝'}
         return dic[self.state]
@@ -110,9 +122,11 @@ class OnShelfApply(models.Model):
 
 
 class UpgradeApply(models.Model):
-    applicant = models.OneToOneField('User', on_delete=models.CASCADE, verbose_name='申请人')  # 申请人如果被删则删除申请
+    applicant = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='申请人')  # 申请人如果被删则删除申请
     lab_info = models.TextField(max_length=200, verbose_name='申请理由')
     state = models.IntegerField(choices=((0, '等待确认'), (1, '已升级'), (2, '已拒绝')), verbose_name='升级状态')
+
+    unread = models.BooleanField(default=True)
 
     def __str__(self):
         return self.applicant.username
@@ -120,3 +134,5 @@ class UpgradeApply(models.Model):
     class Meta:
         verbose_name = '升级申请'
         verbose_name_plural = verbose_name
+
+

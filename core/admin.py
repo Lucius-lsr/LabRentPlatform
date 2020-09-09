@@ -27,10 +27,14 @@ class BorrowApplyAdmin(admin.ModelAdmin):
 
 
 class OnShelfApplyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'target_equipment', 'remarks', 'state')
+    list_display = ('id', 'target_equipment', 'provider','remarks', 'state')
     list_display_links = ('id', 'target_equipment',)
     list_filter = ("state",)
     list_editable = ['state']
+
+    def provider(self, obj):
+        return obj.target_equipment.provider
+    provider.short_description = "提供者"
 
 
 class UpgradeApplyAdmin(admin.ModelAdmin):

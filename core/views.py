@@ -531,3 +531,45 @@ def confirm_return(request):
         return JsonResponse({'message': 'ok'})
     else:
         return JsonResponse({'error': 'not in the lease'}, status=400)
+
+
+'''------------extra function-------------'''
+
+
+def get_notification(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'require GET'}, status=400)
+    username = check_username(request)
+
+    user = User.objects.get(username=username)
+    ret = []
+
+    # as borrower
+    all_borrow_apply = user.user_apply_set.filter(Q(unread=True), (Q(state=1) | Q(state=2)))
+    for apply in all_borrow_apply:
+        apply.unread = False
+        apply.save()
+        ret.append({'type': 'borrow apply', 'state': apply.state, 'apply': apply.to_dict()})
+
+    # as provider
+    equipments = user.equipments.all()
+    for equipment in equipments:
+        apply = equipment.onshelfapply
+        if not apply.unread or apply.state == 0:
+            continue
+        apply.unread = False
+        apply.save()
+        ret.append({'type': 'onshelf apply', 'state': apply.state, 'apply': apply.to_dict()})
+
+    # upgrade
+    apply = user.upgradeapply_set.all()
+    if apply:
+        apply = apply.first()
+        if not apply.unread or apply.state == 0:
+            pass
+        else:
+            apply.unread = False
+            apply.save()
+            ret.append({'type': 'upgrade apply', 'state': apply.state})
+
+    return JsonResponse({'notification': ret})
