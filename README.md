@@ -140,11 +140,8 @@ Response:
 }
 ```
 
-<<<<<<< HEAD
 设备提供者新权限
 
-=======
->>>>>>> 25a7d5c4539748060c0a65a976e25ce1696d8162
 查询设备
 
 ```
@@ -152,11 +149,7 @@ Method: Get
 
 URL:api/v2/search
 
-<<<<<<< HEAD
-Response:
-{
- posts:[]  #equipment information
-=======
+
 QueryParam:
 {
  'username': "",(selectable)
@@ -176,14 +169,11 @@ Response:
         'provider': ,
     }
     ]
->>>>>>> 25a7d5c4539748060c0a65a976e25ce1696d8162
 }
 ```
 
 修改己方设备信息
 
-<<<<<<< HEAD
-=======
 查询设备列表
 
 ```
@@ -209,12 +199,9 @@ Response:
     }
     ]
 }
->>>>>>> 25a7d5c4539748060c0a65a976e25ce1696d8162
+
 ```
 Method: PUT
-
-<<<<<<< HEAD
-=======
 
 
 修改己方设备信息
@@ -222,21 +209,14 @@ Method: PUT
 ```
 Method: PUT
 
->>>>>>> 25a7d5c4539748060c0a65a976e25ce1696d8162
 URL:api/v2/edit
 
 QueryParam:
 {
  'id':
  'name':
-<<<<<<< HEAD
- 'address':
- 'endtime':
- 'contact':
-=======
  'description':
  'count':
->>>>>>> 25a7d5c4539748060c0a65a976e25ce1696d8162
 }
 
 Response:
@@ -254,14 +234,7 @@ URL:api/v2/add
 
 QueryParam:
 {
-<<<<<<< HEAD
- 'name':
- 'address':
- 'endtime':
- 'contact':
-=======
  'count': 1,(selectable)
->>>>>>> 25a7d5c4539748060c0a65a976e25ce1696d8162
 }
 
 Response:
@@ -279,11 +252,7 @@ URL:api/v2/delete
 
 QueryParam:
 {
-<<<<<<< HEAD
- 'id':
-=======
  'count': 1,(selectable)
->>>>>>> 25a7d5c4539748060c0a65a976e25ce1696d8162
 }
 
 Response:
@@ -301,14 +270,9 @@ URL:api/v2/onshelf
 
 QueryParam:
 {
-<<<<<<< HEAD
- 'id':
- 'remarks'://上架时给出的备注消息
-=======
  'name': ,
  'description': ,
  'count': 
->>>>>>> 25a7d5c4539748060c0a65a976e25ce1696d8162
 }
 
 Response:
