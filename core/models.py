@@ -3,8 +3,8 @@ from datetime import datetime
 
 
 class User(models.Model):
-    username = models.CharField(max_length=100)  # 只能是学号
-    email = models.EmailField()
+    username = models.CharField(max_length=100, verbose_name="用户名")  # 只能是学号
+    email = models.EmailField(verbose_name="邮箱")
     password = models.CharField(max_length=100)
     # phone = models.PhoneNumberField()
     is_verified = models.BooleanField(default=False, verbose_name="是否激活")
@@ -42,14 +42,15 @@ class EmailVerifyCode(models.Model):
 
 
 class Equipment(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=500)
-    count = models.IntegerField(default=0)
+    name = models.CharField(max_length=50, verbose_name="名称")
+    description = models.CharField(max_length=500, verbose_name="简介")
+    count = models.IntegerField(default=0, verbose_name="数量")
 
-    provider = models.ForeignKey('User', on_delete=models.CASCADE, related_name='equipments')
+    provider = models.ForeignKey('User', on_delete=models.CASCADE, related_name='equipments', verbose_name="所有者")
 
     def to_dict(self):
         return {
+            'id': self.id,
             'name': self.name,
             'description': self.description,
             'count': self.count,
@@ -65,22 +66,22 @@ class Equipment(models.Model):
 
 
 class BorrowApply(models.Model):
-    borrower = models.ForeignKey('User', on_delete=models.CASCADE, related_name='user_apply_set')  # 申请人如果被删则删除申请
-    count = models.IntegerField(default=0)  # new: borrow number
-    target_equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE,
-                                         related_name='equipment_apply_set')  # 租借设备如果被删则设为空
-    owner = models.ForeignKey('User', on_delete=models.CASCADE,
-                                         related_name='owner_apply_set')  # 所有者如果被删则设为空
-    end_time = models.DateTimeField()  # 结束时间
-    reason = models.TextField(max_length=200)
-    state = models.IntegerField(choices=((0, 'pending'), (1, 'accept'), (2, 'refuse'), (3, 'returned')),
+    borrower = models.ForeignKey('User', on_delete=models.CASCADE, related_name='user_apply_set', verbose_name='申请人')
+    count = models.IntegerField(default=0, verbose_name='申请数量')  # new: borrow number
+    target_equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE, related_name='equipment_apply_set',
+                                         verbose_name='申请设备')
+    owner = models.ForeignKey('User', on_delete=models.CASCADE, related_name='owner_apply_set', verbose_name='所有者')
+    end_time = models.DateTimeField(verbose_name='归还时间')  # 归还时间
+    reason = models.TextField(max_length=200, verbose_name='申请理由')
+    state = models.IntegerField(choices=((0, '等待确认'), (1, '已接受'), (2, '已拒绝'), (3, '已归还')),
                                 verbose_name='申请状态')
 
     def to_dict(self):
         return {
+            'id': self.id,
             'borrower': self.borrower.username,
             'count': self.count,
-            'target_equipment': self.target_equipment.name,
+            'target_equipment': self.target_equipment.to_dict(),
             'endtime': self.end_time,
             'reason': self.reason,
             'state': self.state
@@ -95,10 +96,10 @@ class BorrowApply(models.Model):
 
 
 class OnShelfApply(models.Model):
-    count = models.IntegerField(default=0)  # new: count of equipments
-    target_equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)  # 租借设备如果被删则设为空
-    remarks = models.TextField(max_length=200)
-    state = models.IntegerField(choices=((0, 'pending'), (1, 'accept'), (2, 'refuse')), verbose_name='申请状态')
+    count = models.IntegerField(default=0, verbose_name='数量')  # new: count of equipments
+    target_equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, verbose_name='设备')  # 租借设备如果被删则设为空
+    remarks = models.TextField(max_length=200, verbose_name='上架理由')
+    state = models.IntegerField(choices=((0, '等待确认'), (1, '已接收'), (2, '已拒绝')), verbose_name='申请状态')
 
     def __str__(self):
         return self.target_equipment.name
@@ -109,9 +110,9 @@ class OnShelfApply(models.Model):
 
 
 class UpgradeApply(models.Model):
-    applicant = models.ForeignKey('User', on_delete=models.CASCADE)  # 申请人如果被删则删除申请
+    applicant = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='申请人')  # 申请人如果被删则删除申请
     lab_info = models.TextField(max_length=200)
-    state = models.IntegerField(choices=((0, 'pending'), (1, 'accept'), (2, 'refuse')), verbose_name='申请状态')
+    state = models.IntegerField(choices=((0, '等待确认'), (1, '已接收'), (2, '已拒绝')), verbose_name='申请状态')
 
     def __str__(self):
         return self.applicant.username

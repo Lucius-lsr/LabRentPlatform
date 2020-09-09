@@ -28,7 +28,7 @@ urlpatterns = [
     path('api/v1/post', views.show_all_equipments),
     path('api/v1/apply', views.borrow_apply),
     path('api/v1/applylist', views.get_borrow_apply_list),
-    path('api/v1/rentlist', views.get_borrow_list),
+    path('api/v1/borrowlist', views.get_borrow_list),
     path('api/v1/upgrade', views.upgrade_apply),
     path('api/v1/search', views.search_equipment),
 
@@ -41,7 +41,7 @@ urlpatterns = [
     path('api/v2/offshelf', views.off_shelf_equipment),
     path('api/v2/borrowapplylist', views.get_borrow_apply_list),
     path('api/v2/whether/agree', views.reply_borrow_apply),
-    path('api/v2/searchrent', views.get_lend_list),
+    path('api/v2/lendlist', views.get_lend_list),
     path('api/v2/confirm', views.confirm_return),
 
 ]

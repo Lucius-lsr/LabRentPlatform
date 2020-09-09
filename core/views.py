@@ -34,7 +34,7 @@ def register(request):
     if not re.match('.+', username):
         return JsonResponse({'error': 'not valid id'})
     if not re.match('^(.+)@(.+)$', email):
-        return JsonResponse({'error': 'not tsinghua email'})
+        return JsonResponse({'error': 'not email'})
 
     user_exist = User.objects.filter(Q(username=username) | Q(email=email))
     if user_exist:
@@ -94,17 +94,19 @@ def user_verify(request, code):
 
 @csrf_exempt
 def login(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'require POST'})
+    if request.method != 'PATCH':
+        return JsonResponse({'error': 'require PATCH'})
 
-    username = request.POST.get('username')
+    data = QueryDict(request.body)
+
+    username = data.get('username')
     user = User.objects.filter(username=username)
     if not user:
         return JsonResponse({'error': 'no such a user'})
 
     user = user.first()
     password_stored = user.password
-    password = request.POST.get('password')
+    password = data.get('password')
     if not check_password(password, password_stored):
         return JsonResponse({'error': 'password is wrong'})
     if not user.is_verified:
@@ -130,7 +132,7 @@ def login(request):
     # success
     random_id = str(uuid.uuid4())
     request.session[random_id] = username  # 服务器写入session
-    res = JsonResponse({'user': username})
+    res = JsonResponse({'user': username, 'isprovider': user.is_provider})
     res.set_cookie('session_id', random_id)  # 返回给浏览器cookies
 
     return res
@@ -138,15 +140,15 @@ def login(request):
 
 @csrf_exempt
 def logout(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'require POST'})
+    if request.method != 'PATCH':
+        return JsonResponse({'error': 'require PATCH'})
 
     session_id = request.COOKIES.get('session_id', '')  # 通过session_id在数据库中找用户名
     if session_id:
         session_id_username = request.session.get(session_id, '')
         if session_id_username:
             request.session.delete(session_id)
-            res = JsonResponse({'user': session_id_username})
+            res = JsonResponse({'message': 'ok'})
             res.delete_cookie('session_id')
             return res
     return JsonResponse({'error': 'no valid session'})
@@ -226,14 +228,8 @@ def get_borrow_apply_list(request):
 
     borrow_applies = borrower.user_apply_set.all()
     ret = []
-    for apply in borrow_applies:
-        count = apply.count
-        target_equipment = apply.target_equipment.to_dict()
-        end_time = apply.end_time
-        reason = apply.reason
-        state = apply.state
-        ret.append({'count': count, 'target_equipment': target_equipment, 'end_time': end_time, 'reason': reason,
-                    'state': state})
+    for a in borrow_applies:
+        ret.append(a.to_dict())
 
     return JsonResponse({'posts': ret})
 
@@ -251,11 +247,8 @@ def get_borrow_list(request):
     borrower = borrower.first()
     current_borrow = borrower.user_apply_set.filter(state=1)
     ret = []
-    for equipment in current_borrow:
-        count = equipment.count
-        end_time = equipment.end_time
-        target_equipment = equipment.target_equipment.to_dict()
-        ret.append({'count': count, 'target_equipment': target_equipment, 'end_time': end_time})
+    for c in current_borrow:
+        ret.append(c.to_dict())
 
     return JsonResponse({'posts': ret})
 
@@ -455,21 +448,29 @@ def reply_borrow_apply(request):
         return JsonResponse({'error': 'require PUT'})
     data = QueryDict(request.body)
     id = data.get('id')
-    flag = data.get('flag')
+    try:
+        flag = int(data.get('flag'))
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'invalid parameters'})
+
     if not id or not flag:
         return JsonResponse({'error': 'invalid parameters'})
     apply = BorrowApply.objects.filter(id=id)
     if not apply:
         return JsonResponse({'error': 'apply does not exist'})
     apply = apply.first()
-    if apply.state == 0:
-        if flag != 1 and flag != 2:
-            return JsonResponse({'error': 'wrong flag'})
-        apply.state = flag
-        apply.save()
-        return JsonResponse({'ok': flag})
-    else:
-        return JsonResponse({'error': 'can not agree/disagree this apply'})
+    if apply.state != 0:
+        return JsonResponse({'error': 'can not accept/refuse this apply'})
+    if flag != 1 and flag != 2:
+        return JsonResponse({'error': 'wrong flag'})
+    if apply.target_equipment.count < apply.count:
+        return JsonResponse({'error': 'not enough'})
+    if flag == 1:
+        apply.target_equipment.count -= apply.count
+        apply.target_equipment.save()
+    apply.state = flag
+    apply.save()
+    return JsonResponse({'message': 'ok'})
 
 
 @csrf_exempt
@@ -506,6 +507,8 @@ def confirm_return(request):
     apply = apply.first()
     if apply.state == 1:
         apply.state = 3
+        apply.target_equipment.count += apply.count
+        apply.target_equipment.save()
         apply.save()
         return JsonResponse({'message': 'ok'})
     else:
