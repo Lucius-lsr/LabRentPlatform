@@ -47,4 +47,8 @@ urlpatterns = [
     path('api/v2/lendlist', views.get_lend_list),
     path('api/v2/confirm', views.confirm_return),
 
+    # 扩展内容
+    path('api/v1/notification', views.get_notification),
+
+
 ]

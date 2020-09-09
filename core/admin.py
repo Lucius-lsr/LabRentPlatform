@@ -1,5 +1,6 @@
 from django.contrib import admin
 from core.models import *
+from django.contrib.admin.models import LogEntry
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -16,6 +17,7 @@ class EquipmentAdmin(admin.ModelAdmin):
 
     def state_display(self, obj):
         return obj.onshelfapply
+
     state_display.short_description = "上架情况"
 
 
@@ -27,10 +29,15 @@ class BorrowApplyAdmin(admin.ModelAdmin):
 
 
 class OnShelfApplyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'target_equipment', 'remarks', 'state')
+    list_display = ('id', 'target_equipment', 'provider', 'remarks', 'state')
     list_display_links = ('id', 'target_equipment',)
     list_filter = ("state",)
     list_editable = ['state']
+
+    def provider(self, obj):
+        return obj.target_equipment.provider
+
+    provider.short_description = "提供者"
 
 
 class UpgradeApplyAdmin(admin.ModelAdmin):
@@ -44,6 +51,10 @@ class MessageAdmin(admin.ModelAdmin):
     list_display = ('id', 'sender', 'receiver', 'content', 'is_read')
 
 
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = ['content_type', 'object_repr', 'object_id', 'action_time', 'action_flag', 'user', 'change_message']
+
+
 # Register your models here.
 admin.site.register(User, UserAdmin)
 # admin.site.register(EmailVerifyCode)
@@ -52,5 +63,6 @@ admin.site.register(BorrowApply, BorrowApplyAdmin)
 admin.site.register(UpgradeApply, UpgradeApplyAdmin)
 admin.site.register(OnShelfApply, OnShelfApplyAdmin)
 admin.site.register(Message, MessageAdmin)
+admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.site_title = '设备租赁智能管理平台'
-admin.site.site_header = '后台管理系统登录'
+admin.site.site_header = '后台管理系统'

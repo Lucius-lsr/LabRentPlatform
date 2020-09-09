@@ -470,3 +470,31 @@ Response:
 ```
 
 
+获取通知
+
+```
+Method: GET
+
+URL:api/v1/notification
+
+Response:
+{
+ notifications:[
+     {
+         'type':'borrow apply',  // 或upgrade apply或onshelf apply
+         'state': 1,     // 1 accept, 2 refuse
+         'apply':  // 通知对象的具体信息，可以是租借申请/升级申请/上架申请
+         {
+                'id':1, 
+                'borrower': "",
+                'count': ,
+                'target_equipment': "",
+                'endtime': "",
+                'reason': "",
+                'state': 0 or 1 or 2 or 3
+         }
+     }
+ ]
+}
+```
+
