@@ -210,6 +210,8 @@ def borrow_apply(request):
     target = target.first()
     if target.count < count:
         return JsonResponse({'error': '数量不足'}, status=400)
+    if target.provider.id == borrower.id:
+        return JsonResponse({'error': '不能租借自己的设备'}, status=400)
 
     try:
         BorrowApply.objects.create(borrower=borrower, count=count, target_equipment=target, owner=target.provider,
@@ -625,7 +627,7 @@ def send_message(request):
     try:
         receiver = User.objects.get(username=receiver_name)
     except:
-        return JsonResponse({"error": "Cannot find Receiver"}, status=400)
+        return JsonResponse({"error": "发送对象不存在"}, status=400)
     Message(
         sender=sender,
         receiver=receiver,
