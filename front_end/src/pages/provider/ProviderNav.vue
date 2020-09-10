@@ -15,7 +15,7 @@
         </el-menu-item>
 
 
-        <el-menu-item index="/ucenter">
+        <el-menu-item index="/provider/borrowapplylist">
           <i class="el-icon-bell"></i>
           <span slot="title">审批租借申请</span>
 
