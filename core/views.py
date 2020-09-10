@@ -31,22 +31,22 @@ def register(request):
     email = request.POST.get('email')
     password = request.POST.get('password')
     if not username or not password or not email:
-        return JsonResponse({'error': 'invalid parameters'}, status=401)
+        return JsonResponse({'error': '无效的参数'}, status=401)
     if not re.match('.+', username):
-        return JsonResponse({'error': 'not valid id'}, status=400)
+        return JsonResponse({'error': '无效的用户名'}, status=400)
     if not re.match('^(.+)@(.+)$', email):
-        return JsonResponse({'error': 'not email'}, status=400)
+        return JsonResponse({'error': '无效的邮箱'}, status=400)
 
     user_exist = User.objects.filter(Q(username=username) | Q(email=email))
     if user_exist:
         user_exist = user_exist.first()
         if user_exist.is_verified:  # 已经有用户
-            return JsonResponse({'error': 'user exists'}, status=401)
+            return JsonResponse({'error': '用户已存在'}, status=401)
         else:  # 已经有用户但没有验证
             try:
                 send_email_code(email, 1, request.get_host())
             except ConnectionRefusedError:
-                return JsonResponse({'error': 'fail to send email'}, status=500)
+                return JsonResponse({'error': '邮件发送失败'}, status=500)
             else:
                 user_exist.username = username
                 user_exist.password = make_password(password)
@@ -57,7 +57,7 @@ def register(request):
     try:
         send_email_code(email, 1, request.get_host())
     except ConnectionRefusedError:
-        return HttpResponse({'error': 'fail to send email'}, status=500)
+        return HttpResponse({'error': '邮件发送失败'}, status=500)
     else:
         user = User()
         user.username = username
@@ -93,22 +93,6 @@ def user_verify(request, code):
 
     return HttpResponse('验证失败')
 
-@csrf_exempt
-def get_info(request):
-    if request.method != 'GET':
-        return JsonResponse({'error': 'require GET'}, status=400)
-    # return HttpResponse(request.headers)
-
-
-    # session_username = check_username(request)
-    # print(session_username)
-    # if session_username:  # 已经登录
-    #     user = User.objects.filter(username=session_username)
-    #     res = JsonResponse({'user': session_username, 'isprovider':user.is_provider})
-    #     return JsonResponse(res, status=200)
-    # # else:
-    # #     return JsonResponse({'error': 'no such a user'}, status=401)
-    # return JsonResponse({'error': session_username}, status=401)
 
 @csrf_exempt
 def login(request):
@@ -142,7 +126,7 @@ def login(request):
                     user.save()
                     apply.delete()
                     return HttpResponse('Notice, you have upgraded!')
-            return JsonResponse({'error': 'has logged in'}, status=401)
+            return JsonResponse({'error': '已经登录'}, status=401)
         else:  # 不同用户
             session_id = request.COOKIES.get('session_id', '')
             request.session.delete(session_id)  # 删除前一个登录状态
@@ -212,24 +196,24 @@ def borrow_apply(request):
     try:
         count = int(request.POST.get('count', ""))
     except (ValueError, TypeError):
-        return JsonResponse({'error': 'invalid parameters'}, status=400)
+        return JsonResponse({'error': '无效的参数'}, status=400)
 
     if not target_id or not end_time or count <= 0:
-        return JsonResponse({'error': 'invalid parameters'}, status=400)
+        return JsonResponse({'error': '无效的参数'}, status=400)
 
     target = Equipment.objects.filter(id=target_id, onshelfapply__state=1)  # 上架商品才能申请
     if not target:
-        return JsonResponse({'error': 'invalid id'}, status=400)
+        return JsonResponse({'error': '无效的参数'}, status=400)
     target = target.first()
     if target.count < count:
-        return JsonResponse({'error': 'not enough'}, status=400)
+        return JsonResponse({'error': '数量不足'}, status=400)
 
     try:
         BorrowApply.objects.create(borrower=borrower, count=count, target_equipment=target, owner=target.provider,
                                    end_time=end_time, reason=reason, state=0)
         return JsonResponse({'message': 'ok'})
     except django.core.exceptions.ValidationError:
-        return JsonResponse({'error': 'format error'}, status=400)
+        return JsonResponse({'error': '错误'}, status=400)
 
 
 @csrf_exempt
@@ -286,10 +270,10 @@ def upgrade_apply(request):
     data = QueryDict(request.body)
     lab_info = data.get('lab_info')
     if not lab_info:
-        return JsonResponse({'error': 'require lab information'}, status=400)
+        return JsonResponse({'error': '请填写实验室信息'}, status=400)
 
     if user.is_provider:
-        return JsonResponse({'error': 'has upgraded'}, status=400)
+        return JsonResponse({'error': '已经升级'}, status=400)
     try:
         if user.upgradeapply_set.all():  # 已经有申请则修改
             previous_apply = user.upgradeapply_set.all().first()
@@ -301,7 +285,7 @@ def upgrade_apply(request):
             UpgradeApply.objects.create(applicant=user, lab_info=lab_info, state=0)
             return JsonResponse({'message': 'ok'})
     except (TypeError, ValueError):
-        return JsonResponse({'error': 'fail to apply'}, status=401)
+        return JsonResponse({'error': '申请失败'}, status=401)
 
 
 # Get equipment list by: username OR equipment
@@ -316,13 +300,13 @@ def search_equipment(request):
         try:
             page = int(request.GET.get('page', ""))
         except (ValueError, TypeError):
-            return JsonResponse({'error': 'invalid parameters'}, status=400)
+            return JsonResponse({'error': '无效的参数'}, status=400)
         if username:
             try:
                 user = User.objects.get(username=username)
                 equipment_list = user.equipments.all()
             except:
-                return JsonResponse({'error': 'no this user'}, status=400)
+                return JsonResponse({'error': '用户不存在'}, status=400)
         elif equipment_name:
             equipment_list = Equipment.objects.filter(name__contains=equipment_name, onshelfapply__state=1)  # 上架商品才能被搜索
         #测试会不会传到git上
@@ -349,13 +333,13 @@ def get_my_equipment_list(request):
         try:
             page = int(request.GET.get('page', ""))
         except (ValueError, TypeError):
-            return JsonResponse({'error': 'invalid parameters'}, status=400)
+            return JsonResponse({'error': '无效的参数'}, status=400)
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
         if not user.is_provider:
-            return JsonResponse({'error': 'Permission denied'}, status=403)
+            return JsonResponse({'error': '不是提供者'}, status=403)
         equipment_list = user.equipments.all()
         equipment_list = [e.to_dict() for e in equipment_list]
         total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
@@ -382,6 +366,9 @@ def edit_equipment(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
+        user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.name = name
             custom_equipment.name = description
@@ -389,7 +376,7 @@ def edit_equipment(request):
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
         else:
-            return JsonResponse({'error': 'Permission denied'}, status=403)
+            return JsonResponse({'error': '请求被拒绝'}, status=403)
     else:
         return JsonResponse({'error': 'require PUT'}, status=400)
 
@@ -404,12 +391,15 @@ def increase_equipment(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
+        user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.count += int(add_count)
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
         else:
-            return JsonResponse({'error': 'Permission denied'}, status=403)
+            return JsonResponse({'error': '请求被拒绝'}, status=403)
     else:
         return JsonResponse({'error': 'require POST'}, status=400)
 
@@ -424,13 +414,16 @@ def decrease_equipment(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
+        user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.count -= int(delete_count)
             custom_equipment.count = max(0, custom_equipment.count)
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
         else:
-            return JsonResponse({'error': 'Permission denied'}, status=403)
+            return JsonResponse({'error': '请求被拒绝'}, status=403)
     else:
         return JsonResponse({'error': 'require POST'}, status=400)
 
@@ -443,14 +436,17 @@ def on_shelf_equipment(request):
     description = request.POST.get('description')
     remarks = request.POST.get('remarks')
     if not name or not description or not remarks:
-        return JsonResponse({'error': 'invalid parameters'}, status=400)
+        return JsonResponse({'error': '无效的参数'}, status=400)
     try:
         count = int(request.POST.get('count'))
     except (TypeError, ValueError):
-        return JsonResponse({'error': 'invalid parameters'}, status=400)
+        return JsonResponse({'error': '无效的参数'}, status=400)
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
+    user = User.objects.get(username=username)
+    if not user.is_provider:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
     new_equipment = Equipment(
         name=name,
         description=description,
@@ -472,11 +468,14 @@ def off_shelf_equipment(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
+        user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.delete()
             return JsonResponse({'message': 'ok'})
         else:
-            return JsonResponse({'error': 'Permission denied'}, status=403)
+            return JsonResponse({'error': '请求被拒绝'}, status=403)
     else:
         return JsonResponse({'error': 'require DELETE'}, status=400)
 
@@ -487,6 +486,8 @@ def show_borrow_apply_list(request):
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         borrow_apply_list = user.owner_apply_set.all()
         borrow_apply_list = [b.to_dict() for b in borrow_apply_list]
         return JsonResponse({
@@ -505,26 +506,28 @@ def reply_borrow_apply(request):
     try:
         flag = int(data.get('flag'))
     except (ValueError, TypeError):
-        return JsonResponse({'error': 'invalid parameters'})
+        return JsonResponse({'error': '无效的参数'})
 
     if not id or not flag:
-        return JsonResponse({'error': 'invalid parameters'}, status=400)
+        return JsonResponse({'error': '无效的参数'}, status=400)
     apply = BorrowApply.objects.filter(id=id)
     if not apply:
-        return JsonResponse({'error': 'apply does not exist'}, status=400)
+        return JsonResponse({'error': '租借请求不存在'}, status=400)
     apply = apply.first()
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
-    if apply not in user.owner_apply_set.all():
+    if not user.is_provider:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
+    if apply not in user.owner_apply_set:
         return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state != 0:
-        return JsonResponse({'error': 'can not accept/refuse this apply'}, status=400)
+        return JsonResponse({'error': '设备状态不匹配'}, status=400)
     if flag != 1 and flag != 2:
-        return JsonResponse({'error': 'wrong flag'}, status=400)
+        return JsonResponse({'error': '无效的状态'}, status=400)
     if apply.target_equipment.count < apply.count:
-        return JsonResponse({'error': 'not enough'}, status=400)
+        return JsonResponse({'error': '数量不足'}, status=400)
     if flag == 1:
         apply.target_equipment.count -= apply.count
         apply.target_equipment.save()
@@ -540,6 +543,9 @@ def get_lend_list(request):
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
+    user = User.objects.get(username=username)
+    if not user.is_provider:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
     lender = User.objects.filter(username=username)
     if not lender:
         return JsonResponse({'error': 'please login'}, status=401)
@@ -560,17 +566,19 @@ def confirm_return(request):
     data = QueryDict(request.body)
     id = data.get('id')
     if not id:
-        return JsonResponse({'error': 'invalid parameters'}, status=400)
+        return JsonResponse({'error': '无效的参数'}, status=400)
     apply = BorrowApply.objects.filter(id=id)
     if not apply:
-        return JsonResponse({'error': 'apply does not exist'}, status=400)
+        return JsonResponse({'error': '租借请求不存在'}, status=400)
     apply = apply.first()
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
+    if not user.is_provider:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
     if apply not in user.owner_apply_set:
-        return JsonResponse({'error': 'not your equipment'}, status=400)
+        return JsonResponse({'error': '不是您的设备'}, status=400)
     if apply.state == 1:
         apply.state = 3
         apply.target_equipment.count += apply.count
@@ -578,22 +586,25 @@ def confirm_return(request):
         apply.save()
         return JsonResponse({'message': 'ok'})
     else:
-        return JsonResponse({'error': 'not in the lease'}, status=400)
+        return JsonResponse({'error': '不在租借状态'}, status=400)
 
 
 @csrf_exempt
 def send_message(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'require POST'}, status=400)
-    receiver_id = request.POST.get('receiver_id', 0)
-    if not receiver_id:
+    receiver_name = request.POST.get('receiver_name', "")
+    if not receiver_name:
         return JsonResponse({'error': 'No receiver'}, status=400)
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
     sender = User.objects.get(username=username)
     content = request.POST.get('content', '')
-    receiver = User.objects.get(id=receiver_id)
+    try:
+        receiver = User.objects.get(username=receiver_name)
+    except:
+        return JsonResponse("Cannot find Receiver", status=400)
     Message(
         sender=sender,
         receiver=receiver,
