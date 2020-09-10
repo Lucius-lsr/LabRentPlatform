@@ -8,10 +8,10 @@
       <el-table-column prop="borrower" label="申请人" width="150"></el-table-column>
       <el-table-column prop="state" label="状态" width="150">
         <template slot-scope="scope">
-          <div v-if="scope.row.state === 0" style="color=rgb(245, 245, 245)">等待确认</div>
-          <div v-if="scope.row.state === 1" style="color=green">已租借</div>
-          <div v-if="scope.row.state === 2" style="color=red">已拒绝</div>
-          <div v-if="scope.row.state === 3" style="color=rgb(132, 43, 226)">已归还</div>
+          <div v-if="scope.row.state === 0" style="color:rgb(105, 105, 105)">等待确认</div>
+          <div v-if="scope.row.state === 1" style="color:green">已租借</div>
+          <div v-if="scope.row.state === 2" style="color:red">已拒绝</div>
+          <div v-if="scope.row.state === 3" style="color:rgb(132, 43, 226)">已归还</div>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="200">
@@ -40,20 +40,11 @@
         <el-row class="info">申请租借数目: {{ tableData[currentIndex].count }}</el-row>
         <el-row class="info">归还时间: {{ tableData[currentIndex].endtime }}</el-row>
         <el-row class="info">申请人: {{ tableData[currentIndex].borrower }}</el-row>
-        <el-row class="info">
-          申请状态：
-          <el-col
-            :offset="2"
-            v-if="tableData[currentIndex].state=== 0"
-            style="color=rgb(245, 245, 245)"
-          >等待确认</el-col>
-          <el-col :offset="2" v-if="tableData[currentIndex].state=== 1" style="color=green">已租借</el-col>
-          <el-col :offset="2" v-if="tableData[currentIndex].state=== 2" style="color=red">已拒绝</el-col>
-          <el-col
-            :offset="2"
-            v-if="tableData[currentIndex].state=== 3"
-            style="color=rgb(132, 43, 226)"
-          >已归还</el-col>
+        <el-row class="info">申请状态：
+          <el-col :offset="2" v-if="tableData[currentIndex].state=== 0" style="color:rgb(105, 105, 105)">等待确认</el-col>
+          <el-col :offset="2" v-if="tableData[currentIndex].state=== 1" style="color:green">已租借</el-col>
+          <el-col :offset="2" v-if="tableData[currentIndex].state=== 2" style="color:red">已拒绝</el-col>
+          <el-col :offset="2" v-if="tableData[currentIndex].state=== 3" style="color:rgb(132, 43, 226)">已归还</el-col>
         </el-row>
         <el-row class="info">申请原因：</el-row>
         <el-row class="info">
@@ -90,7 +81,7 @@ export default {
       //   totalPost: 0,
       //   page: 1,
       dialogVisible: false,
-      currentIndex: 0,
+      currentIndex: 0
     };
   },
   mounted() {
@@ -98,28 +89,18 @@ export default {
   },
   methods: {
     getList() {
-      api
-        .getBorrowApplyList()
+      api.getBorrowApplyList()
         .then((res) => {
           //   this.page = res.data.page;
           //   this.totalPost = res.data.total_page;
           this.tableData = res.data.borrow_apply_list;
         })
         .catch((error) => {
-          if (error.response) {
-            //返回错误code
-            this.$message({
-              showClose: true,
-              message: error.response.data.message,
-              type: "error",
-            });
-          } else {
             this.$message({
               showClose: true,
               message: error.data["error"],
               type: "error",
             });
-          }
         });
     },
     //   changePage(page) {
@@ -134,11 +115,10 @@ export default {
     whetherAgree(tag, id) {
       let that = this;
       if (tag === 1) {
-        that
-          .$confirm("确认同意？", "确认信息", {
+        that.$confirm("确认同意？", "确认信息", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
-            type: "warning",
+            type: "warning"
           })
           .then(() => {
             let params = {
@@ -150,7 +130,7 @@ export default {
               .then((res) => {
                 that.$message({
                   type: "success",
-                  message: res.data["message"] + "已同意申请!",
+                  message: res.data["message"] + "已同意申请!"
                 });
                 that.getList();
                 that.dialogVisible = false;
