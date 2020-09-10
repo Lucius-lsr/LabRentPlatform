@@ -143,7 +143,74 @@ class AllMethodTest(TestCase):
                 }
             )
             self.assertEqual(response.status_code, 200)
-            borrow_apply = BorrowApply.objects.get(target_equipment__name="THU")
-            self.assertIsNotNone(borrow_apply)
+            response = self.client.get(
+                '/api/v1/applylist',
+            )
+            self.assertEqual(response.status_code, 200)
+            content = json.loads(response.content)['posts']['count']
+            self.assertNotEqual(content, 0)
+            self.logout()
+            self.test_login_v2()
+
         except:
             self.assertIsNotNone("Borrow THU success")
+
+    def test_equipment(self):
+        self.test_on_shelf()
+        response = self.client.get(
+            '/api/v1/search',
+            {
+                'name': 'THU',
+                'page': 1
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(
+            '/api/v1/search',
+            {
+                'username': 'user_v2',
+                'page': 1
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(
+            '/api/v2/equipmentlist',
+            {
+                'page': 1
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        equipment = Equipment.objects.get(name="THU")
+        response = self.client.put(
+            '/api/v2/edit',
+            "id={}&name={}&description={}&count={}".format(
+                equipment.id,
+                "PKU",
+                "THU to PKU",
+                99
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        equipment = Equipment.objects.get(name="PKU")
+        self.assertEqual(equipment.count, 99)
+        response = self.client.post(
+            '/api/v2/increase',
+            {
+                'id': equipment.id,
+                'count': 2
+            }
+        )
+        # print(json.loads(response.content))
+        self.assertEqual(response.status_code, 200)
+        equipment = Equipment.objects.get(name="PKU")
+        self.assertEqual(equipment.count, 101)
+        response = self.client.post(
+            '/api/v2/decrease',
+            {
+                'id': equipment.id,
+                'count': 2
+            }
+        )
+        equipment = Equipment.objects.get(name="PKU")
+        self.assertEqual(equipment.count, 99)
+

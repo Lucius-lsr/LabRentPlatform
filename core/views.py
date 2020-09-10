@@ -390,8 +390,8 @@ def edit_equipment(request):
             return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.name = name
-            custom_equipment.name = description
-            custom_equipment.name = count
+            custom_equipment.description = description
+            custom_equipment.count = count
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
         else:
