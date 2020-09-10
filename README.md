@@ -1,5 +1,24 @@
 # LabRentPlatform
 
+## 命令
+
+安装依赖
+
+```
+pip install -r requirements.txt
+```
+
+执行测试
+```
+python manage.py test core
+```
+
+统计测试覆盖率
+```
+coverage run --source='.' manage.py test core
+coverage html
+```
+
 ## API
 注册
 
