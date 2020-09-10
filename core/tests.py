@@ -88,12 +88,9 @@ class AllMethodTest(TestCase):
             "lab_info=This is an upgrade apply"
         )
         self.assertEqual(response.status_code, 200)
-        try:
-            apply = UpgradeApply.objects.get(applicant__username='user_v1')
-            apply.state = 1
-            apply.save()
-        except:
-            self.assertIsNone("Upgrade success")
+        apply = UpgradeApply.objects.get(applicant__username='user_v1')
+        apply.state = 1
+        apply.save()
 
     def test_on_shelf(self):
         self.test_login_v2()
@@ -107,25 +104,21 @@ class AllMethodTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        try:
-            apply = OnShelfApply.objects.get(target_equipment__name="THU")
-            apply.state = 1
-            apply.save()
-        except:
-            self.assertEqual(0, 1)
+        apply = OnShelfApply.objects.get(target_equipment__name="THU")
+        apply.state = 1
+        apply.save()
 
     def test_off_shelf(self):
         self.test_on_shelf()
-        try:
-            THU_id = Equipment.objects.get(name="THU").id
-            response = self.client.delete(
-                '/api/v2/offshelf',
-                "equipment_id={}".format(THU_id)
-            )
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(len(Equipment.objects.filter(name="THU")), 0)
-        except:
-            self.assertIsNone("THU exist")
+        THU_id = Equipment.objects.get(name="THU").id
+        response = self.client.post(
+            '/api/v2/offshelf',
+            {
+                'equipment_id': THU_id
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(Equipment.objects.filter(name="THU")), 0)
 
     def test_borrow_apply(self):
         self.test_on_shelf()
@@ -148,6 +141,7 @@ class AllMethodTest(TestCase):
         self.assertEqual(response.status_code, 200)
         posts = json.loads(response.content)['posts']
         self.assertNotEqual(len(posts), 0)
+
         self.logout()
         self.test_login_v2()
         response = self.client.get(
@@ -156,6 +150,11 @@ class AllMethodTest(TestCase):
         self.assertEqual(response.status_code, 200)
         apply = BorrowApply.objects.get(borrower__username='user_v1', owner__username='user_v2')
         self.assertEqual(apply.state, 0)
+
+        response = self.client.get('/api/v2/lendlist')
+        posts = json.loads(response.content)
+        self.assertEqual(len(posts['posts']), 0)
+
         response = self.client.put(
             '/api/v2/whether/agree',
             "id={}&flag={}".format(apply.id, 1)
@@ -163,6 +162,23 @@ class AllMethodTest(TestCase):
         self.assertEqual(response.status_code, 200)
         apply = BorrowApply.objects.get(id=apply.id)
         self.assertEqual(apply.state, 1)
+
+        response = self.client.get('/api/v2/lendlist')
+        posts = json.loads(response.content)
+        self.assertNotEqual(len(posts['posts']), 0)
+
+        response = self.client.put(
+            '/api/v2/confirm',
+            "id={}".format(apply.id)
+        )
+        self.assertEqual(response.status_code, 200)
+        apply = BorrowApply.objects.get(id=apply.id)
+        self.assertEqual(apply.state, 3)
+
+        self.logout()
+        self.test_login_v1()
+
+
 
     def test_equipment(self):
         self.test_on_shelf()
@@ -222,4 +238,33 @@ class AllMethodTest(TestCase):
         )
         equipment = Equipment.objects.get(name="PKU")
         self.assertEqual(equipment.count, 99)
+
+    def test_message(self):
+        self.test_login_v1()
+        response = self.client.post(
+            '/api/v1/sendmessage',
+            {
+                'receiver_name': 'user_v2',
+                'content': "message from v1 to v2"
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/api/v1/getmessages')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['total'], 1)
+        self.assertEqual(json.loads(response.content)['new_message'], 0)
+
+        self.logout()
+        self.test_login_v2()
+        response = self.client.get('/api/v1/getmessages')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['total'], 1)
+        self.assertEqual(json.loads(response.content)['new_message'], 1)
+        response = self.client.put('/api/v1/readmessages')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/api/v1/getmessages')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['total'], 1)
+        self.assertEqual(json.loads(response.content)['new_message'], 0)
 
