@@ -517,7 +517,7 @@ def reply_borrow_apply(request):
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
-    if apply not in user.owner_apply_set:
+    if apply not in user.owner_apply_set.all():
         return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state != 0:
         return JsonResponse({'error': 'can not accept/refuse this apply'}, status=400)
