@@ -4,7 +4,7 @@ import Layout from "../pages/Layout.vue"
 // import Home from '../pages/Home.vue'
 import Login from "../pages/Login.vue"
 import UCenter from "../pages/UCenter.vue"
-
+import Messagelist from "../pages/Messagelist.vue"
 import Page400 from "../pages/errorPage/400.vue"
 import Page401 from "../pages/errorPage/401.vue"
 import Page404 from "../pages/errorPage/404.vue"
@@ -37,6 +37,14 @@ const routes = [
         path: "/ucenter",
         name: "UCenter",
         component: UCenter,
+        meta: {
+           isLogin: true
+        }
+      },
+      {
+        path: "/messagelist",
+        name: "Messagelist",
+        component: Messagelist,
         meta: {
            isLogin: true
         }
