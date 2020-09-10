@@ -216,7 +216,7 @@ def borrow_apply(request):
                                    end_time=end_time, reason=reason, state=0)
         return JsonResponse({'message': 'ok'})
     except django.core.exceptions.ValidationError:
-        return JsonResponse({'error': '错误'}, status=400)
+        return JsonResponse({'error': '错误，可能是时间格式问题'}, status=400)
 
 
 @csrf_exempt
@@ -539,7 +539,7 @@ def reply_borrow_apply(request):
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
-    if apply not in user.owner_apply_set.all():
+    if apply not in user.owner_apply_set:
         return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state != 0:
         return JsonResponse({'error': '设备状态不匹配'}, status=400)

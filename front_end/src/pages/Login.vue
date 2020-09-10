@@ -4,7 +4,7 @@
         <div style="margin-top: 50px"></div>
         <el-row>
             <el-col :span="10" :offset="3">
-                <el-button class="Menu" @click="changeType('login')">登陆</el-button>
+                <el-button class="Menu" @click="changeType('login')">登录</el-button>
             </el-col>
             <el-col :span="11">
                 <el-button class="Menu" @click="changeType('register')" style="margin-left = 20px">注册</el-button>
@@ -52,7 +52,7 @@
                 },
                 type: "login",
                 typeName: {
-                    "login": "登陆",
+                    "login": "登录",
                     "register": "注册"
                 }
             };
@@ -105,7 +105,7 @@
                                         }
                                         this.$message({
                                             showClose: true,
-                                            message: "登陆成功，欢迎" + res.data.user,
+                                            message: "登录成功，欢迎" + res.data.user,
                                             type: "success"
                                         })
                                         this.$router.push('/')
