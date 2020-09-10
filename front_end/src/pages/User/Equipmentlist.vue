@@ -1,12 +1,29 @@
 <template>
 
     <div>
+        <el-row style="margin-left: 10px">
+            <el-col :span="5">
+                <el-input style="margin: 30px 0px 0px 0px" v-model="inputname"
+                          placeholder="请输入需要检索的设备名称"></el-input>
+            </el-col>
+            <el-col :span="2">
+                <el-button style="margin: 30px 5px 0px 0px" type="primary" @click="searchName(inputname)">检索
+                </el-button>
+            </el-col>
+            <el-col :span="1">
+                <el-button style="margin: 30px 5px 0px 0px" type="primary" @click="cancleName()">取消
+                </el-button>
+            </el-col>
+        </el-row>
+        <div style="margin-top: 20px"></div>
         <el-table
                 ref="multipleTable"
                 :data="tableData"
                 tooltip-effect="dark"
                 style="width: 100%"
                 @selection-change="handleSelectionChange"
+                border
+                stripe
         >
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column label="设备编号" width="120">
@@ -19,6 +36,14 @@
         </el-table>
 
 
+<<<<<<< HEAD
+    <el-footer
+      ><layoutFooter
+        :totalPage="totalPage"
+        @changePage="changePage"
+      ></layoutFooter
+    ></el-footer>
+=======
         <el-row>
 
             <el-col :span="6">
@@ -39,6 +64,7 @@
             </el-col>
 
         </el-row>
+>>>>>>> 59b2574fdcace1c233d08cbbca121ff7aadc29e4
 
 
         <el-row>
@@ -80,6 +106,7 @@
 
 <script>
     import api from "../../api";
+    import layoutFooter from "../../components/LayoutFooter.vue"
 
     export default {
         name: "equipmentlist",
@@ -91,6 +118,7 @@
                 applynum: 1,
                 name: "",
                 page: 1,
+                totalPage: 0,
                 total_page: 0,
                 end_time: "",
                 reason: "",
@@ -121,17 +149,31 @@
                 },
             };
         },
-
+        components:{
+            layoutFooter
+        },
         mounted() {
             api.getequipmentlist(1, "").then((res) => {
                 //console.log(res)
                 this.tableData = res.data.posts;
                 this.total_page = res.data.total_page;
+                this.totalPage = res.data.total_page;
+                this.page = res.data.page;
                 // console.log(this.tableData)
             });
         },
 
         methods: {
+            getList(){
+                 api.getequipmentlist(this.page, "").then((res) => {
+                //console.log(res)
+                this.tableData = res.data.posts;
+                this.total_page = res.data.total_page;
+                this.totalPage = res.data.total_page;
+                this.page = res.data.page;
+                // console.log(this.tableData)
+            });
+            },
             toggleSelection(rows) {
                 if (rows) {
                     rows.forEach((row) => {
@@ -220,6 +262,10 @@
                         this.tableData = res.posts;
                     });
                 }
+            },
+            changePage(page) {
+                this.page = page;
+
             },
         },
 

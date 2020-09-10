@@ -6,6 +6,7 @@
       :data="tableData"
       tooltip-effect="dark"
       style="width: 100%"
+      :row-class-name="tableRowClassName"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"></el-table-column>
@@ -30,9 +31,9 @@
       <el-table-column label="归还时间" width="120">
         <template slot-scope="scope">{{ scope.row.endtime }}</template>
       </el-table-column>
-      <el-table-column label="是否即将到期" width="120">
+      <!-- <el-table-column label="是否即将到期" width="120">
         <template slot-scope="scope">{{ scope.row.state }}</template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
     <div style="margin-top: 20px">
@@ -66,20 +67,13 @@ export default {
           var nowmonth = d.getMonth() + 1;
           var nowday = d.getDate();
           for (var index = 0; index < this.tableData.length; index++) {
-            if (
-              this.ifhurry(
+              this.tableData[index].state=this.ifhurry(
                 nowyear,
                 nowmonth,
                 nowday,
                 this.tableData[index].endtime
               )
-            ) {
-              this.tableData[index].state = "是";
-            }
-            // console.log(this.hurry[index]);
-            else {
-              this.tableData[index].state = "否";
-            }
+            
           }
         }
       })
@@ -129,9 +123,23 @@ export default {
       if (isbig) {
         var remains = (year2 - year) * 365 + (month2 - month) * 30 + day2 - day;
         // console.log(remains)
-        if (remains >= 0 && remains < 8) return true;
+        if (remains >= 0 && remains < 8) return 1;
+        else return 0
       }
-      return false;
+      else return 2
+      
+    },
+
+    tableRowClassName({ row }) {
+      //console.log(rowIndex);
+      if (row.state === 0) {
+        return "pending-row";  //正常，白色
+      } else if (row.state === 1) {//紧急，灰色
+        return "done-row";
+      } else if (row.state === 2) {//过期，红色
+        return "reject-row";
+      }
+      return "pending-row";
     },
   },
 };
