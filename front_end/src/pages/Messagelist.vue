@@ -18,7 +18,6 @@
                 </span>
                 <span v-if="messages[index-1].is_read" class="bank">已读</span>
                 <span v-if="!messages[index-1].is_read" class="bank">未读</span>
-                
               </span>
             </div>
             <div class="text item" v-html="messages[index-1].content"></div>
@@ -28,18 +27,22 @@
     </div>
 
     <el-row :gutter="10">
-        <el-col :span="3"><el-button
-        type="primary"
-        icon="el-icon-edit"
-        style="float: left;margin: 20px 0 20px 0"
-        @click="send()"
-        >发送消息</el-button></el-col>
-        <el-col :span="3"><el-button
-        type="primary"
-        icon="el-icon-edit"
-        style="margin: 20px 0px 20px 0"
-        @click="readall()"
-        >一键已读</el-button></el-col>
+      <el-col :span="3">
+        <el-button
+          type="primary"
+          icon="el-icon-edit"
+          style="float: left;margin: 20px 0 20px 0"
+          @click="send()"
+        >发送消息</el-button>
+      </el-col>
+      <el-col :span="3">
+        <el-button
+          type="primary"
+          icon="el-icon-edit"
+          style="margin: 20px 0px 20px 0"
+          @click="readall()"
+        >一键已读</el-button>
+      </el-col>
     </el-row>
     <el-input type="textarea" autosize placeholder="请输入接收人名" v-model="textarea1"></el-input>
     <div style="margin: 20px 0"></div>
@@ -79,15 +82,20 @@ export default {
         return;
       }
       let params = {
-        "receiver_name": this.textarea1,
-        "content": this.textarea2,
+        receiver_name: this.textarea1,
+        content: this.textarea2,
       };
       api
         .sendmessage(params)
         .then((res) => {
-           console.log(res);
+          console.log(res);
           if (res.status == 200) {
             this.$message("发送消息成功！");
+            api.getmessages().then((res) => {
+              this.messages = res.data.messages;
+              // console.log(this.messages)
+              // console.log(this.messages.length)
+            });
           }
         })
         .catch((error) => {
@@ -101,16 +109,18 @@ export default {
         });
     },
 
-    readall(){
-        api.readmessages().then((res) => {
-        //   console.log(res);
+    readall() {
+      api
+        .readmessages()
+        .then((res) => {
+          //   console.log(res);
           if (res.status == 200) {
             this.$message("成功一键已读！");
             //重新渲染
             api.getmessages().then((res) => {
-                this.messages = res.data.messages;
-                    // console.log(this.messages)
-            // console.log(this.messages.length)
+              this.messages = res.data.messages;
+              // console.log(this.messages)
+              // console.log(this.messages.length)
             });
           }
         })
@@ -123,7 +133,7 @@ export default {
             });
           }
         });
-    }
+    },
   },
 };
 </script>
