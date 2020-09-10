@@ -332,6 +332,8 @@ def get_my_equipment_list(request):
         except (ValueError, TypeError):
             return JsonResponse({'error': 'invalid parameters'}, status=400)
         username = check_username(request)
+        if not username:
+            return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
         if not user.is_provider:
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -359,6 +361,8 @@ def edit_equipment(request):
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
+        if not username:
+            return JsonResponse({'error': 'please login'}, status=401)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.name = name
             custom_equipment.name = description
@@ -379,6 +383,8 @@ def increase_equipment(request):
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
+        if not username:
+            return JsonResponse({'error': 'please login'}, status=401)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.count += int(add_count)
             custom_equipment.save()
@@ -397,6 +403,8 @@ def decrease_equipment(request):
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
+        if not username:
+            return JsonResponse({'error': 'please login'}, status=401)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.count -= int(delete_count)
             custom_equipment.count = max(0, custom_equipment.count)
@@ -421,11 +429,14 @@ def on_shelf_equipment(request):
         count = int(request.POST.get('count'))
     except (TypeError, ValueError):
         return JsonResponse({'error': 'invalid parameters'}, status=400)
+    username = check_username(request)
+    if not username:
+        return JsonResponse({'error': 'please login'}, status=401)
     new_equipment = Equipment(
         name=name,
         description=description,
         count=count,
-        provider=User.objects.get(username=check_username(request))
+        provider=User.objects.get(username=username)
     )
     new_equipment.save()
     apply = OnShelfApply(target_equipment=new_equipment, remarks=remarks, state=0)
@@ -440,6 +451,8 @@ def off_shelf_equipment(request):
         equipment_id = data.get('equipment_id')
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
+        if not username:
+            return JsonResponse({'error': 'please login'}, status=401)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.delete()
             return JsonResponse({'message': 'ok'})
@@ -451,16 +464,13 @@ def off_shelf_equipment(request):
 
 def show_borrow_apply_list(request):
     if request.method == 'GET':
-        page = request.GET.get('page', 1)
         username = check_username(request)
+        if not username:
+            return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
-        borrow_apply_list = user.borrowApplies.all()
+        borrow_apply_list = user.owner_apply_set.all()
         borrow_apply_list = [b.to_dict() for b in borrow_apply_list]
-        total_page = int((len(borrow_apply_list) + PAGE_SIZE - 1) / PAGE_SIZE)
-        borrow_apply_list = borrow_apply_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
         return JsonResponse({
-            'page': page,
-            'total_page': total_page,
             'borrow_apply_list': borrow_apply_list
         })
     else:

@@ -382,24 +382,16 @@ Method: Get
 
 URL:api/v2/borrowapplylist
 
-QueryParam:
-{
- 'page': 1, (selectable)
-}
-
 Response:
 {
- 'posts':[{ 'page': ,
-            'total_page': ,
-            'borrow_apply_list': [{
-                'id':1, 
-                'borrower': "",
-                'count': ,
-                'target_equipment': "",
-                'endtime': "",
-                'reason': "",
-                'state': 0 or 1 or 2 or 3
-            }]
+    'borrow_apply_list': [{
+        'id':1, 
+        'borrower': "",
+        'count': ,
+        'target_equipment': "",
+        'endtime': "",
+        'reason': "",
+        'state': 0 or 1 or 2 or 3
     }]
 }
 ```

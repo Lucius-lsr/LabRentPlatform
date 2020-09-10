@@ -1,6 +1,8 @@
 from django.contrib import admin
 from core.models import *
 from django.contrib.admin.models import LogEntry
+from django.db.models import Count, Sum
+from django.db.models import Q
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -55,14 +57,68 @@ class LogEntryAdmin(admin.ModelAdmin):
     list_display = ['content_type', 'object_repr', 'object_id', 'action_time', 'action_flag', 'user', 'change_message']
 
 
+class SummaryAdmin(admin.ModelAdmin):
+    change_list_template = 'admin/summary.html'
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    def has_module_permission(self, request):
+        return True
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context=extra_context)
+
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        user = {
+            'normal': Count('id', filter=Q(is_provider=False)),
+            'provider': Count('id', filter=Q(is_provider=True)),
+        }
+
+        apply = {
+            'pending': Count('id', filter=Q(user_apply_set__state=0)),
+            'accept': Count('id', filter=Q(user_apply_set__state=1)),
+            'refuse': Count('id', filter=Q(user_apply_set__state=2)),
+            'return': Count('id', filter=Q(user_apply_set__state=3)),
+        }
+
+        rent = {
+            'on_rent': Sum('user_apply_set__count', distinct=True, filter=Q(user_apply_set__state=1)),
+            'all': Sum('equipments__count', filter=Q(is_provider=True), distinct=True),
+        }
+
+        shelf = {
+            'pending': Count('equipments__onshelfapply', filter=Q(equipments__onshelfapply__state=0)),
+            'accept': Count('equipments__onshelfapply', filter=Q(equipments__onshelfapply__state=1)),
+            'refuse': Count('equipments__onshelfapply', filter=Q(equipments__onshelfapply__state=2)),
+        }
+
+        response.context_data['user'] = dict(qs.aggregate(**user))
+        response.context_data['apply'] = dict(qs.aggregate(**apply))
+        response.context_data['rent'] = dict(qs.aggregate(**rent))
+        response.context_data['shelf'] = dict(qs.aggregate(**shelf))
+
+        return response
+
+
 # Register your models here.
 admin.site.register(User, UserAdmin)
-# admin.site.register(EmailVerifyCode)
 admin.site.register(Equipment, EquipmentAdmin)
 admin.site.register(BorrowApply, BorrowApplyAdmin)
 admin.site.register(UpgradeApply, UpgradeApplyAdmin)
 admin.site.register(OnShelfApply, OnShelfApplyAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(LogEntry, LogEntryAdmin)
+admin.site.register(Summary, SummaryAdmin)
 admin.site.site_title = '设备租赁智能管理平台'
 admin.site.site_header = '后台管理系统'
