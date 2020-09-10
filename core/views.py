@@ -120,15 +120,15 @@ def login(request):
     username = data.get('username')
     user = User.objects.filter(username=username)
     if not user:
-        return JsonResponse({'error': 'no such a user'}, status=401)
+        return JsonResponse({'error': '用户不存在'}, status=401)
 
     user = user.first()
     password_stored = user.password
     password = data.get('password')
     if not check_password(password, password_stored):
-        return JsonResponse({'error': 'password is wrong'}, status=401)
+        return JsonResponse({'error': '密码错误'}, status=401)
     if not user.is_verified:
-        return JsonResponse({'error': 'have not be verified'}, status=403)
+        return JsonResponse({'error': '用户尚未激活'}, status=403)
 
     # has logged in
     session_username = check_username(request)
