@@ -37,10 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
-    # 'djangobower',
-    # 'admin_tools_stats',
-    # 'django_nvd3',
-
 ]
 
 MIDDLEWARE = [
@@ -128,18 +124,3 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'labrentplatform@163.com'
 EMAIL_HOST_PASSWORD = 'ZBVTKBKQKIZFMGDA'
 DEFAULT_FROM_EMAIL = 'labrentplatform@163.com'
-
-# BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
-#
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
-#
-# BOWER_INSTALLED_APPS = (
-#     'jquery#2.0.3',
-#     'jquery-ui#~1.10.3',
-#     'd3#3.3.6',
-#     'nvd3#1.1.12-beta',
-# )
-#
-# STATICFILES_FINDERS = (
-#     'djangobower.finders.BowerFinder',
-# )
