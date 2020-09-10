@@ -12,9 +12,7 @@
       <el-table-column prop="borrower" label="申请人" width="150"></el-table-column>
       <el-table-column prop="state" label="状态" width="150">
         <template slot-scope="scope">
-            <div v-if="scope.row.state === 0" style="color=rgb(245, 245, 245)">等待确认</div>
             <div v-if="scope.row.state === 1" style="color=green">已租借</div>
-            <div v-if="scope.row.state === 2" style="color=red">已拒绝</div>
             <div v-if="scope.row.state === 3" style="color=rgb(132, 43, 226)">已归还</div>
         </template></el-table-column>
       <el-table-column label="操作" width="200">
@@ -24,7 +22,8 @@
           @click="handleDetails(scope.$index)">详情</el-button>
         <el-button
           type="success"
-          @click="handleReturn(scope.$index,scope.row)">确认归还</el-button>
+          v-if="scope.row.state === 1"
+          @click="handleReturn(scope.row)">确认归还</el-button>
       </template></el-table-column>
       
     </el-table>
@@ -47,9 +46,7 @@
       <el-row class="info">归还时间: {{ tableData[currentIndex].endtime }}</el-row>
       <el-row class="info">申请人: {{ tableData[currentIndex].borrower }}</el-row>
       <el-row class="info">申请状态：
-          <el-col :offset="2" v-if="tableData[currentIndex].state=== 0" style="color=rgb(245, 245, 245)">等待确认</el-col>
           <el-col :offset="2" v-if="tableData[currentIndex].state=== 1" style="color=green">已租借</el-col>
-          <el-col :offset="2" v-if="tableData[currentIndex].state=== 2" style="color=red">已拒绝</el-col>
           <el-col :offset="2" v-if="tableData[currentIndex].state=== 3" style="color=rgb(132, 43, 226)">已归还</el-col>
       </el-row>
       <el-row class="info">申请原因：</el-row>
@@ -70,8 +67,6 @@ import api from "../../../api/index"
 
 export default {
   name: "LendList",
-  components: {
-  },
   data(){
     return{
       tableData:[],
@@ -111,6 +106,7 @@ export default {
             message: res.data.message + "已确认",
             type: "success"
         });
+        this.getList();
       })
       .catch(error => {
         this.$message({
@@ -129,5 +125,6 @@ export default {
 .info {
   text-align: left;
   font-size: 20px;
+  margin-top: 10px;
 }
 </style>
