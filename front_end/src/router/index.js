@@ -122,25 +122,25 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-    if (to.meta.isLogin) {
-        // 是否登陆
-        // 判断vuex中是否存储有token
-        const token = store.state.LoginModule.token
-        if (token) {
-          next();
-        } 
-        else {
-          next({
-            //回到登录页面
-            path: "/login"
-          })
-        }
-      } 
-      else {
-        next();
-      }
-})
+// router.beforeEach((to, from, next) => {
+//     if (to.meta.isLogin) {
+//         // 是否登陆
+//         // 判断vuex中是否存储有token
+//         const token = store.state.LoginModule.token
+//         if (token) {
+//           next();
+//         } 
+//         else {
+//           next({
+//             //回到登录页面
+//             path: "/login"
+//           })
+//         }
+//       } 
+//       else {
+//         next();
+//       }
+// })
 
 
 export default router
