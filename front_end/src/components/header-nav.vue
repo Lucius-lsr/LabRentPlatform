@@ -22,7 +22,7 @@
                 <router-link to="/login" tag="li">登录</router-link>
             </el-menu-item> -->
             <!-- <el-menu-item index="4" v-if="myStore.state.isProvider"> -->
-            <el-menu-item index="4">
+            <el-menu-item index="4" v-if="isProvider">
                 <router-link to="/provider" tag="li">设备管理（仅设备提供者可用）</router-link>
             </el-menu-item>
             
@@ -37,19 +37,22 @@
 </template>
 <script>
 
-import store from "../store/index.js"
+// import store from "../store/index.js"
 
 export default {
     name: "HeaderNav",
     data() {
         return {
             activeIndex: "1",
-            myStore: store
+            isProvider:""
         };
+    },
+    mounted() {
+    this.isProvider = localStorage.getItem("isProvider");
     },
     methods: {
         role(){
-            console.log(this.myStore.state.isProvider)
+            // console.log(this.myStore.state.isProvider)
         }
     }
 };

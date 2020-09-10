@@ -14,12 +14,12 @@
           <span slot="title">我的设备列表</span>
         </el-menu-item>
         <el-menu-item index="/ucenter">
-          <i class="el-icon-edit"></i>
-          <span slot="title">收到的租借申请</span>
+          <i class="el-icon-bell"></i>
+          <span slot="title">审批租借申请</span>
         </el-menu-item>
         <el-menu-item index="/info/otherspost">
           <i class="el-icon-user-solid"></i>
-          <span slot="title">已借出设备历史信息</span>
+          <span slot="title">借出设备信息</span>
         </el-menu-item>
       </el-menu>
     </el-col>
@@ -32,7 +32,7 @@
 export default {
   data() {
     return {
-    //   id: store.state.id
+    //id: store.state.id
     };
   },
   name: "ProviderNav",

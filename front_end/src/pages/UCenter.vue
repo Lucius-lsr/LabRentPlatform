@@ -55,6 +55,7 @@ export default {
           if (res.status == 200) {
             this.$message("成功登出");
             localStorage.setItem("token", "");
+            localStorage.setItem("isProvider", "");
             this.$router.push("/login");
           }
         })
