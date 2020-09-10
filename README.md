@@ -382,11 +382,6 @@ Method: Get
 
 URL:api/v2/borrowapplylist
 
-QueryParam:
-{
- 'page': 1, (selectable)
-}
-
 Response:
 {
     'borrow_apply_list': [{

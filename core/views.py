@@ -468,7 +468,7 @@ def show_borrow_apply_list(request):
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
-        borrow_apply_list = user.borrowApplies.all()
+        borrow_apply_list = user.owner_apply_set.all()
         borrow_apply_list = [b.to_dict() for b in borrow_apply_list]
         return JsonResponse({
             'borrow_apply_list': borrow_apply_list
