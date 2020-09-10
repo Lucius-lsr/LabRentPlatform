@@ -17,7 +17,7 @@
           type="primary"
           @click="up_apply()"
         >申请成为设备提供者</el-button>
-        <el-button style="margin: 30px 30px 0px 0px" type="primary" @click="logout()">登出</el-button>
+        <el-button style="margin: 30px 30px 0px 0px" type="danger" @click="logout()">登出</el-button>
         <br />
         <el-input
           style="min-height:200px"
@@ -48,26 +48,27 @@ export default {
   },
   methods: {
     logout() {
-      api
-        .getLogout()
-        .then((res) => {
-          // console.log(res)
-          if (res.status == 200) {
-            this.$message("成功登出");
-            localStorage.setItem("token", "");
-            localStorage.setItem("isProvider", "");
-            this.$router.push("/login");
-          }
-        })
-        .catch((error) => {
-          if (error.data["error"]) {
-            this.$message({
-              showClose: true,
-              message: error.data["error"],
-              type: "error",
-            });
-          }
-        });
+        api
+          .getLogout()
+          .then((res) => {
+            // console.log(res)
+            if (res.status == 200) {
+              this.$message("成功登出");
+              localStorage.setItem("token", "");
+              localStorage.setItem("isProvider", "");
+              this.$router.push("/login");
+            }
+          })
+          .catch((error) => {
+            if (error.data["error"]) {
+              this.$message({
+                showClose: true,
+                message: error.data["error"],
+                type: "error",
+              });
+            }
+          });
+      
     },
     up_apply() {
       if (this.textarea == "") {

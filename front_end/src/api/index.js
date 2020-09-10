@@ -37,12 +37,16 @@ const api = {
         // console.log(readyData)
         return axios.put("/api/v1/upgrade",readyData)
     },
+
+    
+   
     /**
      * provider
      */
     getMyEquipmentList(params){
         return axios.get("/api/v2/equipmentlist",{params})
     },
+    //修改设备
     modifyEquipment(params){
         // console.log(params);
         let readyData=Qs.stringify({
@@ -69,6 +73,41 @@ const api = {
         });
         return axios.post("/api/v2/decrease",readyData);
     },
+    onShelfApply(params){
+        console.log(params);
+        let readyData=Qs.stringify({
+            name: params.name,
+            description: params.description,
+            remarks: params.remarks,
+            count: params.count,
+        });
+        return axios.post("/api/v2/onshelf",readyData);
+    },
+    offShelf(params){
+        console.log(params);
+        return axios.delete("/api/v2/offshelf",{params});
+    },
+    getBorrowApplyList(){
+        return axios.get("/api/v2/borrowapplylist")
+    },
+    agreeBorrowApply(params){
+        console.log(params);
+        let readyData=Qs.stringify({
+            id:params.id,
+            flag:params.flag
+        });
+        return axios.put("/api/v2/whether/agree",readyData);
+    },
+    getLendList(params){
+        return axios.get("/api/v2/lendlist",{params})
+    },
+    confirmReturn(params){
+        console.log(params);
+        let readyData=Qs.stringify({
+            id:params.id
+        });
+        return axios.put("/api/v2/confirm",readyData);
+    },
 
     //获取设备列表
     getequipmentlist(page,name)
@@ -86,7 +125,25 @@ const api = {
     {
         return axios.get("/api/v1/borrowlist")
     },
+    //发送消息
+    sendmessage(params)
+    {
+        let readyData=Qs.stringify({
+            receiver_name:params.receiver_name,
+            content:params.content
+        });
+        return axios.post("/api/v1/sendmessage",readyData)
+    },
 
+    getmessages()
+    {
+        return axios.get("/api/v1/getmessages")
+    },
+    
+    readmessages()
+    {
+        return axios.put("api/v1/readmessages")
+    },
 
 
 
