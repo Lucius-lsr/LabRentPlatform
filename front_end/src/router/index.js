@@ -14,7 +14,7 @@ import MyEquipmentDetails from "../pages/provider/main/MyEquipmentDetails.vue"
 import equipmentlist from '../pages/User/Equipmentlist.vue';
 import applylist from '../pages/User/Applylist.vue';
 import borrowlist from '../pages/User/Borrowlist.vue';
-import store from "../store"
+
 
 Vue.use(VueRouter)
 
@@ -46,7 +46,7 @@ const routes = [
         name: "equipmentlist",
         component: equipmentlist,
         meta: {
-                isLogin: true,
+                // isLogin: true,
         },
       },
       {
@@ -126,8 +126,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     if (to.meta.isLogin) {
         // 是否登陆
-        // 判断vuex中是否存储有token
-        const token = store.state.LoginModule.token
+        const token = localStorage.getItem('token')
         if (token) {
           next();
         }
