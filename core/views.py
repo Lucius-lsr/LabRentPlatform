@@ -626,7 +626,7 @@ def send_message(request):
     try:
         receiver = User.objects.get(username=receiver_name)
     except:
-        return JsonResponse("Cannot find Receiver", status=400)
+        return JsonResponse("error: Cannot find Receiver", status=400)
     Message(
         sender=sender,
         receiver=receiver,
