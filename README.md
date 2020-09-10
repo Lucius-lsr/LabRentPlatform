@@ -8,6 +8,17 @@
 pip install -r requirements.txt
 ```
 
+启动Django服务
+```
+python manage.py runserver
+```
+
+迁移数据库
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
 执行测试
 ```
 python manage.py test core
