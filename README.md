@@ -162,7 +162,7 @@ Response:
 ```
 Method: Get
 
-URL:api/v2/search
+URL:api/v1/search
 
 
 QueryParam:
@@ -303,7 +303,7 @@ Response:
 ```
 Method: POST
 
-URL:api/v2/add
+URL:api/v2/increase
 
 QueryParam:
 {
