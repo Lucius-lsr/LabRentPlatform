@@ -313,7 +313,7 @@ def search_equipment(request):
         elif equipment_name:
             equipment_list = Equipment.objects.filter(name__contains=equipment_name, onshelfapply__state=1)  # 上架商品才能被搜索
         else:
-            equipment_list = Equipment.objects.all()
+            equipment_list = Equipment.objects.filter(onshelfapply__state=1)  # 上架商品才能被搜索
         equipment_list = [e.to_dict() for e in equipment_list]
         total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
         equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
@@ -483,7 +483,10 @@ def off_shelf_equipment(request):
     if request.method == 'DELETE':
         data = QueryDict(request.body)
         equipment_id = data.get('equipment_id')
-        custom_equipment = Equipment.objects.get(id=equipment_id)
+        try:
+            custom_equipment = Equipment.objects.get(id=equipment_id)
+        except:
+            return JsonResponse({'error': '设备不存在'}, status=400)
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
