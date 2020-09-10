@@ -15,11 +15,11 @@
 
 
             <el-menu-item index="3" >
-                <router-link to="/applylist" tag="li">申请信息列表</router-link>
+                <router-link to="/applylist" tag="li">申请列表</router-link>
             </el-menu-item>
 
             <el-menu-item index="4">
-                <router-link to="/borrowlist" tag="li">租借成功列表</router-link>
+                <router-link to="/borrowlist" tag="li">租借列表</router-link>
             </el-menu-item>
 
             <el-menu-item index="5">

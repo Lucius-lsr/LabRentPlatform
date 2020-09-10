@@ -20,7 +20,7 @@
       <el-table-column label="设备名称" width="120">
         <template slot-scope="scope">{{ scope.row.target_equipment.name }}</template>
       </el-table-column>
-      <el-table-column label="设备描述" width="120">
+      <el-table-column label="设备描述">
         <template slot-scope="scope">{{ scope.row.target_equipment.description }}</template>
       </el-table-column>
       <el-table-column label="设备数量" width="60">
@@ -32,7 +32,7 @@
       <el-table-column label="归还时间" width="120">
         <template slot-scope="scope">{{ scope.row.endtime }}</template>
       </el-table-column>
-      <el-table-column label="申请原因" width="120">
+      <el-table-column label="申请原因">
         <template slot-scope="scope">{{ scope.row.reason }}</template>
       </el-table-column>
       <el-table-column label="申请状态" width="120">
