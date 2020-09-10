@@ -28,7 +28,7 @@
           style="margin: 30px 5px 0px 20px"
           controls-position="right"
           v-model="applynum"
-          @change="handleChange"
+        
           :min="1"
           :max="10"
           label="数目"
@@ -123,9 +123,9 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleChange(value) {
-      console.log(value);
-    },
+    // handleChange(value) {
+    //   console.log(value);
+    // },
 
     searchName(name) {
       this.name = name;

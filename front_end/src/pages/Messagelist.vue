@@ -85,7 +85,7 @@ export default {
       api
         .sendmessage(params)
         .then((res) => {
-        //   console.log(res);
+           console.log(res);
           if (res.status == 200) {
             this.$message("发送消息成功！");
           }
