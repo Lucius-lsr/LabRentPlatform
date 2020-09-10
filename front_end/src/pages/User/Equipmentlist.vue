@@ -6,6 +6,7 @@
       tooltip-effect="dark"
       style="width: 100%"
       @selection-change="handleSelectionChange"
+      border
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="设备编号" width="120">

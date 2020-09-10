@@ -78,7 +78,7 @@ def user_verify(request, code):
             if user_list:
                 user = user_list.first()
                 if not user.is_verified:
-                    if (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds() > 3600*24:  # 有效时间1d
+                    if (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds() > 3600 * 24:  # 有效时间1d
                         test = (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds()
                         email_ver.delete()
                         return HttpResponse(test)
@@ -114,19 +114,22 @@ def login(request):
     if not user.is_verified:
         return JsonResponse({'error': '用户尚未激活'}, status=403)
 
+    # update upgrade info
+    apply = UpgradeApply.objects.filter(applicant=user)
+    if not user.is_provider:
+        if apply and apply.first().state == 1:
+            user.is_provider = True
+            user.save()
+            apply.delete()
+            return HttpResponse('Notice, you have upgraded!')
+    elif apply:
+        apply.delete()
+
     # has logged in
     session_username = check_username(request)
     if session_username:  # 已经登录
         if username == session_username:  # 同一用户
-            # update upgrade info
-            if not user.is_provider:
-                apply = UpgradeApply.objects.filter(applicant=user)
-                if apply and apply.first().state == 1:
-                    user.is_provider = True
-                    user.save()
-                    apply.delete()
-                    return HttpResponse('Notice, you have upgraded!')
-            return JsonResponse({'error': '已经登录'}, status=401)
+            return JsonResponse({'error': '已经登录'}, status=400)
         else:  # 不同用户
             session_id = request.COOKIES.get('session_id', '')
             request.session.delete(session_id)  # 删除前一个登录状态
@@ -309,8 +312,6 @@ def search_equipment(request):
                 return JsonResponse({'error': '用户不存在'}, status=400)
         elif equipment_name:
             equipment_list = Equipment.objects.filter(name__contains=equipment_name, onshelfapply__state=1)  # 上架商品才能被搜索
-        #测试会不会传到git上
-        #问题，username和name都空的时候返回的list是空的
         else:
             equipment_list = Equipment.objects.all()
         equipment_list = [e.to_dict() for e in equipment_list]
@@ -337,11 +338,29 @@ def get_my_equipment_list(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
-        user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except:
+            return JsonResponse({'error': 'please login'}, status=401)
         if not user.is_provider:
             return JsonResponse({'error': '不是提供者'}, status=403)
-        equipment_list = user.equipments.all()
-        equipment_list = [e.to_dict() for e in equipment_list]
+
+        equipment_list = user.equipments.filter(onshelfapply__state=0)
+        pending_ = []
+        for e in equipment_list:
+            dic = e.to_dict()
+            dic['state'] = 0
+            pending_.append(dic)
+
+        equipment_list = user.equipments.filter(onshelfapply__state=1)
+        accept_ = []
+        for e in equipment_list:
+            dic = e.to_dict()
+            dic['state'] = 1
+            accept_.append(dic)
+
+        equipment_list = pending_ + accept_
+
         total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
         equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
         return JsonResponse({
@@ -577,7 +596,7 @@ def confirm_return(request):
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
-    if apply not in user.owner_apply_set:
+    if apply not in user.owner_apply_set.all():
         return JsonResponse({'error': '不是您的设备'}, status=400)
     if apply.state == 1:
         apply.state = 3
