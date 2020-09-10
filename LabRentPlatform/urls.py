@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # 普通用户
+    # 通过session_id确认是否是已经登录的用户
+    path('api/v1/info',views.get_info),
     path('api/v1/register', views.register),
     re_path(r'^users/user_verify/(.+)$', views.user_verify),
     path('api/v1/login', views.login),
