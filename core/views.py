@@ -93,6 +93,22 @@ def user_verify(request, code):
 
     return HttpResponse('验证失败')
 
+@csrf_exempt
+def get_info(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'require GET'}, status=400)
+    # return HttpResponse(request.headers)
+
+
+    # session_username = check_username(request)
+    # print(session_username)
+    # if session_username:  # 已经登录
+    #     user = User.objects.filter(username=session_username)
+    #     res = JsonResponse({'user': session_username, 'isprovider':user.is_provider})
+    #     return JsonResponse(res, status=200)
+    # # else:
+    # #     return JsonResponse({'error': 'no such a user'}, status=401)
+    # return JsonResponse({'error': session_username}, status=401)
 
 @csrf_exempt
 def login(request):
