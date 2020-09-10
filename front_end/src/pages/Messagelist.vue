@@ -38,7 +38,7 @@
         type="primary"
         icon="el-icon-edit"
         style="margin: 20px 0px 20px 0"
-        @click="send()"
+        @click="readall()"
         >一键已读</el-button></el-col>
     </el-row>
     <el-input type="textarea" autosize placeholder="请输入接收人名" v-model="textarea1"></el-input>
@@ -100,6 +100,30 @@ export default {
           }
         });
     },
+
+    readall(){
+        api.readmessages().then((res) => {
+        //   console.log(res);
+          if (res.status == 200) {
+            this.$message("成功一键已读！");
+            //重新渲染
+            api.getmessages().then((res) => {
+                this.messages = res.data.messages;
+                    // console.log(this.messages)
+            // console.log(this.messages.length)
+            });
+          }
+        })
+        .catch((error) => {
+          if (error.data["error"]) {
+            this.$message({
+              showClose: true,
+              message: error.data["error"],
+              type: "error",
+            });
+          }
+        });
+    }
   },
 };
 </script>
