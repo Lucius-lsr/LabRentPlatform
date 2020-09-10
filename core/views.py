@@ -480,10 +480,9 @@ def on_shelf_equipment(request):
 
 @csrf_exempt
 def off_shelf_equipment(request):
-    if request.method == 'DELETE':
-        data = QueryDict(request.body)
-        equipment_id = data.get('equipment_id')
+    if request.method == 'POST':
         try:
+            equipment_id = request.POST.get('equipment_id', '')
             custom_equipment = Equipment.objects.get(id=equipment_id)
         except:
             return JsonResponse({'error': '设备不存在'}, status=400)
@@ -542,7 +541,7 @@ def reply_borrow_apply(request):
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
-    if apply not in user.owner_apply_set:
+    if apply not in user.owner_apply_set.all():
         return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state != 0:
         return JsonResponse({'error': '设备状态不匹配'}, status=400)
