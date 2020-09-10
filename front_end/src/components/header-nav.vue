@@ -23,7 +23,7 @@
             </el-menu-item> -->
             <!-- <el-menu-item index="4" v-if="myStore.state.isProvider"> -->
             <el-menu-item index="4" v-if="isProvider">
-                <router-link to="/provider" tag="li">设备管理（仅设备提供者可用）</router-link>
+                <router-link to="/provider" tag="li">我的设备管理</router-link>
             </el-menu-item>
             
             <el-menu-item index="6">

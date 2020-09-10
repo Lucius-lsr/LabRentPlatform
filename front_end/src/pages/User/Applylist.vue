@@ -30,7 +30,7 @@
         <template slot-scope="scope">{{ scope.row.target_equipment.provider }}</template>
       </el-table-column>
       <el-table-column label="归还时间" width="120">
-        <template slot-scope="scope">{{ scope.row.end_time }}</template>
+        <template slot-scope="scope">{{ scope.row.endtime }}</template>
       </el-table-column>
       <el-table-column label="申请原因" width="120">
         <template slot-scope="scope">{{ scope.row.reason }}</template>
@@ -62,7 +62,10 @@ export default {
     api
       .getapplylist()
       .then((res) => {
-        this.tableData = res.posts;
+        if (res.status == 200) {
+          this.tableData = res.data.posts;
+          // console.log(this.tableData)
+        }
       })
       .catch((error) => {
         if (error.data["error"]) {
@@ -88,8 +91,8 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    tableRowClassName({ row, rowIndex }) {
-      console.log(rowIndex);
+    tableRowClassName({ row }) {
+      //console.log(rowIndex);
       if (row.state === 0) {
         return "pending-row";
       } else if (row.state === 1) {
@@ -117,7 +120,7 @@ export default {
 
 <style>
 .el-table .pending-row {
-  background: #e6a23c;
+  background: #fdffff;
 }
 
 .el-table .success-row {

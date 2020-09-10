@@ -145,6 +145,18 @@ const api = {
         return axios.put("api/v1/readmessages")
     },
 
+    //申请租借设备
+    apply(params)
+    {
+        let readyData=Qs.stringify({
+            id:params.id,
+            endtime:params.endtime,
+            reason:params.reason,
+            count:params.count
+        });
+        return axios.post("api/v1/apply",readyData)
+    },
+
 
 
     
