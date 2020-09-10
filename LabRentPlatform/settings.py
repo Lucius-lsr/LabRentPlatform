@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,7 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core'
+    'core',
+    # 'djangobower',
+    # 'admin_tools_stats',
+    # 'django_nvd3',
+
 ]
 
 MIDDLEWARE = [
@@ -72,7 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'LabRentPlatform.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -82,7 +83,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -102,7 +102,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -118,7 +117,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -131,3 +129,17 @@ EMAIL_HOST_USER = 'labrentplatform@163.com'
 EMAIL_HOST_PASSWORD = 'ZBVTKBKQKIZFMGDA'
 DEFAULT_FROM_EMAIL = 'labrentplatform@163.com'
 
+# BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
+#
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+#
+# BOWER_INSTALLED_APPS = (
+#     'jquery#2.0.3',
+#     'jquery-ui#~1.10.3',
+#     'd3#3.3.6',
+#     'nvd3#1.1.12-beta',
+# )
+#
+# STATICFILES_FINDERS = (
+#     'djangobower.finders.BowerFinder',
+# )

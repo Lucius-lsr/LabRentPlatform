@@ -77,9 +77,10 @@ def user_verify(request, code):
             if user_list:
                 user = user_list.first()
                 if not user.is_verified:
-                    if (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds() > 3600:  # 有效时间1h
+                    if (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds() > 3600*24:  # 有效时间1h
+                        test = (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds()
                         email_ver.delete()
-                        return HttpResponse('验证已过期，验证失效')
+                        return HttpResponse(test)
                     else:
                         user.is_verified = True
                         user.save()
