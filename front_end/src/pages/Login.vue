@@ -184,7 +184,15 @@
                         this.$message('成功登出')
                         localStorage.setItem("token", "")
                     }
-                })
+                }).catch(error => {
+                                    if (error.data['error']) {
+                                        this.$message({
+                                            showClose: true,
+                                            message: error.data['error'],
+                                            type: "error"
+                                        })
+                                    }
+                                })
             }
         }
     };
