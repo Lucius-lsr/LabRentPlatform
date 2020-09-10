@@ -210,6 +210,8 @@ def borrow_apply(request):
     target = target.first()
     if target.count < count:
         return JsonResponse({'error': '数量不足'}, status=400)
+    if target.provider.id == borrower.id:
+        return JsonResponse({'error': '不能租借自己的设备'}, status=400)
 
     try:
         BorrowApply.objects.create(borrower=borrower, count=count, target_equipment=target, owner=target.provider,
@@ -498,7 +500,7 @@ def off_shelf_equipment(request):
         else:
             return JsonResponse({'error': '请求被拒绝'}, status=403)
     else:
-        return JsonResponse({'error': 'require DELETE'}, status=400)
+        return JsonResponse({'error': 'require POST'}, status=400)
 
 
 def show_borrow_apply_list(request):
@@ -625,7 +627,7 @@ def send_message(request):
     try:
         receiver = User.objects.get(username=receiver_name)
     except:
-        return JsonResponse({"error": "Cannot find Receiver"}, status=400)
+        return JsonResponse({"error": "发送对象不存在"}, status=400)
     Message(
         sender=sender,
         receiver=receiver,
@@ -656,7 +658,7 @@ def get_messages(request):
 @csrf_exempt
 def read_messages(request):
     if request.method != 'PUT':
-        return JsonResponse({'error': 'require PUT'})
+        return JsonResponse({'error': 'require PUT'}, status=400)
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)

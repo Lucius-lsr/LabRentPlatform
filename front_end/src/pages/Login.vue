@@ -58,11 +58,11 @@
             };
         },
         mounted() {
-            const token=localStorage.getItem("token")
-            if(token)
-            {
-                this.$router.push('/equipmentlist')
-            }
+            // const token=localStorage.getItem("token")
+            // if(token)
+            // {
+            //     this.$router.push('/equipmentlist')
+            // }
         },
         methods: {
             ...mapMutations("LoginModule", ["setToken"]),
