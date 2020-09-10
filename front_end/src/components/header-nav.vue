@@ -32,6 +32,9 @@
             <el-menu-item index="7">
                 <router-link to="/borrowlist" tag="li">租借成功列表</router-link>
             </el-menu-item>
+            <el-menu-item index="8">
+                <router-link to="/messagelist" tag="li">消息列表</router-link>
+            </el-menu-item>
         </el-menu>
     </div>
 </template>
