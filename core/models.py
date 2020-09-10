@@ -6,7 +6,6 @@ class User(models.Model):
     username = models.CharField(max_length=100, verbose_name="用户名")  # 只能是学号
     email = models.EmailField(verbose_name="邮箱")
     password = models.CharField(max_length=100)
-    # phone = models.PhoneNumberField()
     is_verified = models.BooleanField(default=False, verbose_name="是否激活")
     is_provider = models.BooleanField(default=False, verbose_name="是否升级")
 
@@ -24,7 +23,7 @@ class User(models.Model):
         return self.username
 
     class Meta:
-        verbose_name = '用户详情'
+        verbose_name = ' 用户详情'
         verbose_name_plural = verbose_name
 
 
@@ -62,7 +61,7 @@ class Equipment(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = '设备详情'
+        verbose_name = ' 设备详情'
         verbose_name_plural = verbose_name
 
 
@@ -93,7 +92,7 @@ class BorrowApply(models.Model):
         return '%s租赁%s' % (self.borrower.username, self.target_equipment.name)
 
     class Meta:
-        verbose_name = '租借申请'
+        verbose_name = '  租借申请'
         verbose_name_plural = verbose_name
 
 
@@ -117,7 +116,7 @@ class OnShelfApply(models.Model):
         return dic[self.state]
 
     class Meta:
-        verbose_name = '上架申请'
+        verbose_name = '  上架申请'
         verbose_name_plural = verbose_name
 
 
@@ -132,7 +131,7 @@ class UpgradeApply(models.Model):
         return self.applicant.username
 
     class Meta:
-        verbose_name = '升级申请'
+        verbose_name = '  升级申请'
         verbose_name_plural = verbose_name
 
 
@@ -156,4 +155,11 @@ class Message(models.Model):
 
     class Meta:
         verbose_name = '用户消息'
+        verbose_name_plural = verbose_name
+
+
+class Summary(User):
+    class Meta:
+        proxy = True
+        verbose_name = '统计'
         verbose_name_plural = verbose_name

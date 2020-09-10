@@ -1,0 +1,88 @@
+{% extends "admin/change_list.html" %}
+
+{% load i18n %}
+{#{% load humanize %}#}
+{#{% load mathtags %}#}
+{% load tz %}
+
+
+{% block content_title %}
+    <h1> {% trans '统计信息' %} </h1>
+{% endblock %}
+
+
+{% block result_list %}
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {packages: ["corechart"]});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data_1 = google.visualization.arrayToDataTable([
+                ['用户总数', '类型'],
+                ['普通用户', {{ user.normal }}],
+                ['设备提供者', {{ user.provider }}],
+            ]);
+            var options_1 = {
+                title: '用户类型',
+                is3D: true,
+            };
+
+            var data_4 = google.visualization.arrayToDataTable([
+                ['上架申请', '类型'],
+                ['申请中', {{ shelf.pending }}],
+                ['已拒绝', {{ shelf.refuse }}],
+                ['已上架', {{ shelf.accept }}],
+            ]);
+            var options_4 = {
+                title: '上架申请',
+                is3D: true,
+            };
+
+
+            var data_2 = google.visualization.arrayToDataTable([
+                ['租借请求', '状态'],
+                ['申请中', {{ apply.pending }}],
+                ['已拒绝', {{ apply.refuse }}],
+                ['正在租借', {{ apply.accept }}],
+                ['已归还', {{ apply.return }}],
+            ]);
+            var options_2 = {
+                title: '租借请求',
+                is3D: true,
+            };
+
+            var data_3 = google.visualization.arrayToDataTable([
+                ['库存状态', '状态'],
+                ['可租借', {{ rent.all }}],
+                ['租借中', {{ rent.on_rent }}],
+            ]);
+            var options_3 = {
+                title: '库存状态',
+                is3D: true,
+            };
+
+
+            var chart_1 = new google.visualization.PieChart(document.getElementById('piechart_1'));
+            chart_1.draw(data_1, options_1);
+            var chart_2 = new google.visualization.PieChart(document.getElementById('piechart_2'));
+            chart_2.draw(data_2, options_2);
+            var chart_3 = new google.visualization.PieChart(document.getElementById('piechart_3'));
+            chart_3.draw(data_3, options_3);
+            var chart_4 = new google.visualization.PieChart(document.getElementById('piechart_4'));
+            chart_4.draw(data_4, options_4);
+        }
+    </script>
+
+    <div class="results">
+        <div id="piechart_1" style="width: 500px; height: 300px;display: inline-block;"></div>
+        <div id="piechart_4" style="width: 500px; height: 300px;display: inline-block;"></div>
+        <div id="piechart_2" style="width: 500px; height: 300px;display: inline-block;"></div>
+        <div id="piechart_3" style="width: 500px; height: 300px;display: inline-block;"></div>
+    </div>
+
+
+{% endblock %}
+
+{% block pagination %}{% endblock %}
