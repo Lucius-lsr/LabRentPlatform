@@ -73,7 +73,7 @@ class BorrowApply(models.Model):
     owner = models.ForeignKey('User', on_delete=models.CASCADE, related_name='owner_apply_set', verbose_name='所有者')
     end_time = models.DateTimeField(verbose_name='归还时间')  # 归还时间
     reason = models.TextField(max_length=200, verbose_name='申请理由')
-    state = models.IntegerField(choices=((0, '等待确认'), (1, '已租借'), (2, '已拒绝'), (3, '已归还')), verbose_name='租借状态')
+    state = models.IntegerField(choices=((0, '申请中'), (1, '已租借'), (2, '已拒绝'), (3, '已归还')), verbose_name='租借状态')
 
     unread = models.BooleanField(default=True)
 
@@ -99,7 +99,7 @@ class BorrowApply(models.Model):
 class OnShelfApply(models.Model):
     target_equipment = models.OneToOneField(Equipment, on_delete=models.CASCADE, verbose_name='设备')
     remarks = models.TextField(max_length=200, verbose_name='上架理由')
-    state = models.IntegerField(choices=((0, '等待确认'), (1, '已上架'), (2, '已拒绝')), verbose_name='上架状态')
+    state = models.IntegerField(choices=((0, '申请中'), (1, '已上架'), (2, '已拒绝')), verbose_name='上架状态')
 
     unread = models.BooleanField(default=True)
 
@@ -112,7 +112,7 @@ class OnShelfApply(models.Model):
         }
 
     def __str__(self):
-        dic = {0: '等待确认', 1: '已上架', 2: '已拒绝'}
+        dic = {0: '申请中', 1: '已上架', 2: '已拒绝'}
         return dic[self.state]
 
     class Meta:
@@ -123,7 +123,7 @@ class OnShelfApply(models.Model):
 class UpgradeApply(models.Model):
     applicant = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='申请人')  # 申请人如果被删则删除申请
     lab_info = models.TextField(max_length=200, verbose_name='申请理由')
-    state = models.IntegerField(choices=((0, '等待确认'), (1, '已升级'), (2, '已拒绝')), verbose_name='升级状态')
+    state = models.IntegerField(choices=((0, '申请中'), (1, '已升级'), (2, '已拒绝')), verbose_name='升级状态')
 
     unread = models.BooleanField(default=True)
 
