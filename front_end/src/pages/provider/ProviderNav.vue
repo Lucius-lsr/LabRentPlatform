@@ -15,7 +15,7 @@
         </el-menu-item>
         <el-menu-item index="/ucenter">
           <i class="el-icon-edit"></i>
-          <span slot="title">租借申请</span>
+          <span slot="title">收到的租借申请</span>
         </el-menu-item>
         <el-menu-item index="/info/otherspost">
           <i class="el-icon-user-solid"></i>
