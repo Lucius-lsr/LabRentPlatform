@@ -3,6 +3,7 @@ from core.models import *
 from django.contrib.admin.models import LogEntry
 from django.db.models import Count, Sum
 from django.db.models import Q
+from django.db.models.functions import Coalesce
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -93,8 +94,8 @@ class SummaryAdmin(admin.ModelAdmin):
         }
 
         rent = {
-            'on_rent': Sum('user_apply_set__count', distinct=True, filter=Q(user_apply_set__state=1)),
-            'all': Sum('equipments__count', filter=Q(is_provider=True), distinct=True),
+            'on_rent': Coalesce(Sum('user_apply_set__count', distinct=True, filter=Q(user_apply_set__state=1)), 0),
+            'all': Coalesce(Sum('equipments__count', filter=Q(is_provider=True), distinct=True), 0),
         }
 
         shelf = {
