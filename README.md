@@ -378,7 +378,7 @@ Response:
 下架设备
 
 ```
-Method: DELETE
+Method: POST
 
 URL:api/v2/offshelf
 

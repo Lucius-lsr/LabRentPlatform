@@ -500,7 +500,7 @@ def off_shelf_equipment(request):
         else:
             return JsonResponse({'error': '请求被拒绝'}, status=403)
     else:
-        return JsonResponse({'error': 'require DELETE'}, status=400)
+        return JsonResponse({'error': 'require POST'}, status=400)
 
 
 def show_borrow_apply_list(request):
@@ -658,7 +658,7 @@ def get_messages(request):
 @csrf_exempt
 def read_messages(request):
     if request.method != 'PUT':
-        return JsonResponse({'error': 'require PUT'})
+        return JsonResponse({'error': 'require PUT'}, status=400)
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
