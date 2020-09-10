@@ -305,6 +305,7 @@ def search_equipment(request):
                 return JsonResponse({'error': 'no this user'}, status=400)
         elif equipment_name:
             equipment_list = Equipment.objects.filter(name__contains=equipment_name, onshelfapply__state=1)  # 上架商品才能被搜索
+        #测试会不会传到git上
         equipment_list = [e.to_dict() for e in equipment_list]
         total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
         equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
