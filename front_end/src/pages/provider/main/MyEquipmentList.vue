@@ -1,5 +1,9 @@
 <template>
-  <div class="equipmentlist">
+  <div class="borrowapplylist">
+    <el-row>
+      <el-col :offset="0" :span="2"><el-button type="success" @click="onShelfApply()">上架申请</el-button></el-col>
+    </el-row>
+    <div style="margin-top: 10px"></div>
     <el-table
       :data="tableData"
       border
@@ -30,7 +34,7 @@
     
     <el-footer
       ><layoutFooter
-        :totalPost="totalPost"
+        :totalPage="totalPage"
         @changePage="changePage"
       ></layoutFooter
     ></el-footer>
@@ -103,7 +107,7 @@ export default {
   data(){
     return{
       tableData:[],
-      totalPost: 0,
+      totalPage: 0,
       page: 1,
       applyContent:{
         name: "",
@@ -128,7 +132,7 @@ export default {
         api.getMyEquipmentList(params)
         .then(res =>{
           this.page = res.data.page;
-          this.totalPost = res.data.total_page;
+          this.totalPage = res.data.total_page;
           this.tableData = res.data.posts;
         })
         .catch(error => {
@@ -160,7 +164,7 @@ export default {
       handleoffshelf(index, row){
         console.log(index, row);
         let params = {
-          id: row.id
+          equipment_id: row.id
         }
         api.offShelf(params)
         .then(res =>{
@@ -186,7 +190,7 @@ export default {
         };
         this.loadList(params); 
       },
-            onShelfApply() {
+      onShelfApply() {
         this.applyVisible = true;
       },
       submitApply() {

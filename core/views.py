@@ -480,10 +480,9 @@ def on_shelf_equipment(request):
 
 @csrf_exempt
 def off_shelf_equipment(request):
-    if request.method == 'DELETE':
-        data = QueryDict(request.body)
-        equipment_id = data.get('equipment_id')
+    if request.method == 'POST':
         try:
+            equipment_id = request.POST.get('equipment_id', '')
             custom_equipment = Equipment.objects.get(id=equipment_id)
         except:
             return JsonResponse({'error': '设备不存在'}, status=400)
