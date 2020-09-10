@@ -194,7 +194,7 @@ Method: POST
 URL:api/v1/sendmessage
 QueryParam:
 {
- 'receiver_id':,
+ 'receiver_name':,
  'content':
 }
 Response:
@@ -209,8 +209,6 @@ Method: GET
 URL:api/v1/getmessages
 QueryParam:
 {
- 'receiver_id':,
- 'content':
 }
 Response:
 {

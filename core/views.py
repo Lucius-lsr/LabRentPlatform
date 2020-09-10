@@ -382,6 +382,9 @@ def edit_equipment(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
+        user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.name = name
             custom_equipment.name = description
@@ -404,6 +407,9 @@ def increase_equipment(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
+        user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.count += int(add_count)
             custom_equipment.save()
@@ -424,6 +430,9 @@ def decrease_equipment(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
+        user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.count -= int(delete_count)
             custom_equipment.count = max(0, custom_equipment.count)
@@ -451,6 +460,9 @@ def on_shelf_equipment(request):
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
+    user = User.objects.get(username=username)
+    if not user.is_provider:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
     new_equipment = Equipment(
         name=name,
         description=description,
@@ -472,6 +484,9 @@ def off_shelf_equipment(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
+        user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.delete()
             return JsonResponse({'message': 'ok'})
@@ -487,6 +502,8 @@ def show_borrow_apply_list(request):
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
+        if not user.is_provider:
+            return JsonResponse({'error': 'Permission denied'}, status=403)
         borrow_apply_list = user.owner_apply_set.all()
         borrow_apply_list = [b.to_dict() for b in borrow_apply_list]
         return JsonResponse({
@@ -517,6 +534,8 @@ def reply_borrow_apply(request):
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
+    if not user.is_provider:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
     if apply not in user.owner_apply_set:
         return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state != 0:
@@ -540,6 +559,9 @@ def get_lend_list(request):
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
+    user = User.objects.get(username=username)
+    if not user.is_provider:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
     lender = User.objects.filter(username=username)
     if not lender:
         return JsonResponse({'error': 'please login'}, status=401)
@@ -569,6 +591,8 @@ def confirm_return(request):
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
+    if not user.is_provider:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
     if apply not in user.owner_apply_set:
         return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state == 1:
@@ -585,15 +609,18 @@ def confirm_return(request):
 def send_message(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'require POST'}, status=400)
-    receiver_id = request.POST.get('receiver_id', 0)
-    if not receiver_id:
+    receiver_name = request.POST.get('receiver_name', "")
+    if not receiver_name:
         return JsonResponse({'error': 'No receiver'}, status=400)
     username = check_username(request)
     if not username:
         return JsonResponse({'error': 'please login'}, status=401)
     sender = User.objects.get(username=username)
     content = request.POST.get('content', '')
-    receiver = User.objects.get(id=receiver_id)
+    try:
+        receiver = User.objects.get(username=receiver_name)
+    except:
+        return JsonResponse("Cannot find Receiver", status=400)
     Message(
         sender=sender,
         receiver=receiver,
