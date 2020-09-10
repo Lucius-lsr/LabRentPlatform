@@ -389,8 +389,6 @@ QueryParam:
 
 Response:
 {
-    'page': ,
-    'total_page': ,
     'borrow_apply_list': [{
         'id':1, 
         'borrower': "",
