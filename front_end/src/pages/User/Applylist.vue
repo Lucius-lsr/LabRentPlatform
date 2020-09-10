@@ -17,7 +17,7 @@
       <el-table-column label="设备编号" width="60">
         <template slot-scope="scope">{{ scope.row.target_equipment.id }}</template>
       </el-table-column>
-      <el-table-column label="设备名称" width="120">
+      <el-table-column label="设备名称">
         <template slot-scope="scope">{{ scope.row.target_equipment.name }}</template>
       </el-table-column>
       <el-table-column label="设备描述">
