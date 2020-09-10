@@ -23,7 +23,7 @@
           type="primary"
           @click="up_apply()"
         >申请成为设备提供者</el-button>
-        <el-button style="margin: 30px 30px 0px 0px" type="danger" @click="logout()">登出</el-button>
+        <el-button style="margin: 30px 30px 0px 0px; float:right" type="danger" @click="logout()">登出</el-button>
         <br />
         <el-input
           style="min-height:200px"
