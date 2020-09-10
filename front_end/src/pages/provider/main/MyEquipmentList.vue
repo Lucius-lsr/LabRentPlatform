@@ -1,9 +1,5 @@
 <template>
   <div class="equipmentlist">
-        <el-row :gutter="20">
-          <el-col :span="6"><el-input placeholder="请输入设备名称" v-model="searchName"></el-input></el-col>
-          <el-col :span="1"><el-button type="primary" @click="search()">搜索</el-button></el-col>
-        </el-row>
         <div style="margin: 10px"></div>
     <el-table
       :data="tableData"
