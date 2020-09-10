@@ -12,6 +12,7 @@ import django.core.exceptions
 import re
 import uuid
 from django.http import QueryDict
+import math
 
 from .models import User, BorrowApply, OnShelfApply, UpgradeApply, Equipment, Message
 import json
@@ -77,7 +78,7 @@ def user_verify(request, code):
             if user_list:
                 user = user_list.first()
                 if not user.is_verified:
-                    if (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds() > 3600*24:  # 有效时间1h
+                    if (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds() > 3600*24:  # 有效时间1d
                         test = (datetime.now() - email_ver.add_time.replace(tzinfo=None)).total_seconds()
                         email_ver.delete()
                         return HttpResponse(test)
@@ -394,6 +395,7 @@ def decrease_equipment(request):
         username = check_username(request)
         if custom_equipment and custom_equipment.provider.username == username:
             custom_equipment.count -= int(delete_count)
+            custom_equipment.count = max(0, custom_equipment.count)
             custom_equipment.save()
             return JsonResponse({'message': 'ok'})
         else:
@@ -571,6 +573,9 @@ def get_messages(request):
     })
 
 
+'''------------extra function-------------'''
+
+
 @csrf_exempt
 def read_messages(request):
     if request.method != 'PUT':
@@ -583,7 +588,6 @@ def read_messages(request):
         m.is_read = True
         m.save()
     return JsonResponse({'message': 'ok'})
-'''------------extra function-------------'''
 
 
 def get_notification(request):
