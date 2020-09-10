@@ -47,6 +47,10 @@ class UpgradeApplyAdmin(admin.ModelAdmin):
     list_editable = ['state']
 
 
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'sender', 'receiver', 'content', 'is_read')
+
+
 class LogEntryAdmin(admin.ModelAdmin):
     list_display = ['content_type', 'object_repr', 'object_id', 'action_time', 'action_flag', 'user', 'change_message']
 
@@ -58,6 +62,7 @@ admin.site.register(Equipment, EquipmentAdmin)
 admin.site.register(BorrowApply, BorrowApplyAdmin)
 admin.site.register(UpgradeApply, UpgradeApplyAdmin)
 admin.site.register(OnShelfApply, OnShelfApplyAdmin)
+admin.site.register(Message, MessageAdmin)
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.site_title = '设备租赁智能管理平台'
 admin.site.site_header = '后台管理系统'

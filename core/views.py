@@ -13,7 +13,7 @@ import re
 import uuid
 from django.http import QueryDict
 
-from .models import User, BorrowApply, OnShelfApply, UpgradeApply, Equipment
+from .models import User, BorrowApply, OnShelfApply, UpgradeApply, Equipment, Message
 import json
 
 PAGE_SIZE = 10
@@ -534,6 +534,55 @@ def confirm_return(request):
         return JsonResponse({'error': 'not in the lease'}, status=400)
 
 
+@csrf_exempt
+def send_message(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'require POST'}, status=400)
+    receiver_id = request.POST.get('receiver_id', 0)
+    if not receiver_id:
+        return JsonResponse({'error': 'No receiver'}, status=400)
+    username = check_username(request)
+    if not username:
+        return JsonResponse({'error': 'please login'}, status=401)
+    sender = User.objects.get(username=username)
+    content = request.POST.get('content', '')
+    receiver = User.objects.get(id=receiver_id)
+    Message(
+        sender=sender,
+        receiver=receiver,
+        content=content
+    ).save()
+    return JsonResponse({'message': 'ok'})
+
+
+def get_messages(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'require GET'}, status=400)
+    username = check_username(request)
+    if not username:
+        return JsonResponse({'error': 'please login'}, status=401)
+    all_messages = Message.objects.filter(Q(sender__username=username) | Q(receiver__username=username)).order_by('id')
+    all_messages = [x.to_dict() for x in all_messages]
+    new_messages = [x for x in all_messages if x['receiver'] == username and x['is_read'] == False]
+    return JsonResponse({
+        'total': len(all_messages),
+        'new_message': len(new_messages),
+        'messages': all_messages
+    })
+
+
+@csrf_exempt
+def read_messages(request):
+    if request.method != 'PUT':
+        return JsonResponse({'error': 'require PUT'})
+    username = check_username(request)
+    if not username:
+        return JsonResponse({'error': 'please login'}, status=401)
+    new_messages = Message.objects.filter(Q(receiver__username=username) & Q(is_read=False))
+    for m in new_messages:
+        m.is_read = True
+        m.save()
+    return JsonResponse({'message': 'ok'})
 '''------------extra function-------------'''
 
 

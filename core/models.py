@@ -136,3 +136,24 @@ class UpgradeApply(models.Model):
         verbose_name_plural = verbose_name
 
 
+class Message(models.Model):
+    sender = models.ForeignKey('User', on_delete=models.CASCADE, related_name='sended', verbose_name="发送者")
+    receiver = models.ForeignKey('User', on_delete=models.CASCADE, related_name='received', verbose_name="接收者")
+    content = models.TextField(max_length=300, verbose_name="消息内容")
+    is_read = models.BooleanField(default=False, verbose_name="已读")
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'sender': self.sender.username,
+            'receiver': self.receiver.username,
+            'content': self.content,
+            'is_read': self.is_read
+        }
+
+    def __str__(self):
+        return self.content
+
+    class Meta:
+        verbose_name = '用户消息'
+        verbose_name_plural = verbose_name
