@@ -1,5 +1,8 @@
 <template>
   <div>
+      <div v-if="!messages.length">
+          当前无通知
+      </div>
     <div v-if="messages.length">
       <div v-for="index in (0,messages.length)" :key="index">
         <div style="margin: 5px">
@@ -20,7 +23,7 @@
           </el-card>
         </div>
       </div>
-    </div>
+</div>
 
     
     
