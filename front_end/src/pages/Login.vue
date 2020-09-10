@@ -57,6 +57,13 @@
                 }
             };
         },
+        mounted() {
+            const token=localStorage.getItem("token")
+            if(token)
+            {
+                this.$router.push('/equipmentlist')
+            }
+        },
         methods: {
             ...mapMutations("LoginModule", ["setToken"]),
             submitForm(formName) {

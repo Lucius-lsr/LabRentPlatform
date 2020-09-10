@@ -41,15 +41,13 @@ instance.interceptors.request.use(config =>{
 )
 
 instance.interceptors.response.use(
-    
     response => response.status === 200 ? Promise.resolve(response) : Promise.reject(response),
-    
     error => {
         const { response } = error; 
-        /**
+        /*
          * response包含的信息：
-         *  status
-         *  data
+         * status
+         * data
          */
         if(response){
             // 给出开发者具体的错误信息
