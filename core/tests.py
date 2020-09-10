@@ -93,7 +93,7 @@ class AllMethodTest(TestCase):
             apply.state = 1
             apply.save()
         except:
-            self.assertSequenceEqual("Upgrade success")
+            self.assertIsNone("Upgrade success")
 
     def test_on_shelf(self):
         self.test_login_v2()
@@ -125,35 +125,44 @@ class AllMethodTest(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(Equipment.objects.filter(name="THU")), 0)
         except:
-            self.assertIsNotNone("THU exist")
+            self.assertIsNone("THU exist")
 
     def test_borrow_apply(self):
         self.test_on_shelf()
         self.logout()
         self.test_login_v1()
-        try:
-            THU_id = Equipment.objects.get(name="THU").id
-            response = self.client.post(
-                '/api/v1/apply',
-                {
-                    "id": THU_id,
-                    "endtime": "2020-09-07T15:00:00Z",
-                    "reason": "This is reason for borrow THU",
-                    "count": 3
-                }
-            )
-            self.assertEqual(response.status_code, 200)
-            response = self.client.get(
-                '/api/v1/applylist',
-            )
-            self.assertEqual(response.status_code, 200)
-            content = json.loads(response.content)['posts']['count']
-            self.assertNotEqual(content, 0)
-            self.logout()
-            self.test_login_v2()
-
-        except:
-            self.assertIsNotNone("Borrow THU success")
+        THU_id = Equipment.objects.get(name="THU").id
+        response = self.client.post(
+            '/api/v1/apply',
+            {
+                "id": THU_id,
+                "endtime": "2020-09-07T15:00:00Z",
+                "reason": "This is reason for borrow THU",
+                "count": 3
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(
+            '/api/v1/applylist',
+        )
+        self.assertEqual(response.status_code, 200)
+        posts = json.loads(response.content)['posts']
+        self.assertNotEqual(len(posts), 0)
+        self.logout()
+        self.test_login_v2()
+        response = self.client.get(
+            '/api/v2/borrowapplylist',
+        )
+        self.assertEqual(response.status_code, 200)
+        apply = BorrowApply.objects.get(borrower__username='user_v1', owner__username='user_v2')
+        self.assertEqual(apply.state, 0)
+        response = self.client.put(
+            '/api/v2/whether/agree',
+            "id={}&flag={}".format(apply.id, 1)
+        )
+        self.assertEqual(response.status_code, 200)
+        apply = BorrowApply.objects.get(id=apply.id)
+        self.assertEqual(apply.state, 1)
 
     def test_equipment(self):
         self.test_on_shelf()

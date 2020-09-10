@@ -543,7 +543,7 @@ def reply_borrow_apply(request):
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
-    if apply not in user.owner_apply_set.all():
+    if apply.owner.username != username:
         return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state != 0:
         return JsonResponse({'error': '设备状态不匹配'}, status=400)
