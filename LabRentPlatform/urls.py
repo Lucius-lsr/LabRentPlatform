@@ -27,7 +27,7 @@ urlpatterns = [
     re_path(r'^users/user_verify/(.+)$', views.user_verify),
     path('api/v1/login', views.login),
     path('api/v1/logout', views.logout),
-    path('api/v1/post', views.show_all_equipments),
+    # path('api/v1/post', views.show_all_equipments),
     path('api/v1/apply', views.borrow_apply),
     path('api/v1/applylist', views.get_borrow_apply_list),
     path('api/v1/borrowlist', views.get_borrow_list),

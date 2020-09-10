@@ -2,6 +2,7 @@
 .vscode
 __pycache__
 */__pycache__
+front_end/node_modules
 
 # Django stuff:
 *.log

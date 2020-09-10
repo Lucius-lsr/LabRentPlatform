@@ -172,26 +172,26 @@ def logout(request):
     return JsonResponse({'error': 'no valid session'}, status=401)
 
 
-@csrf_exempt
-def show_all_equipments(request):
-    if request.method != 'GET':
-        return JsonResponse({'error': 'require GET'}, status=400)
-
-    try:
-        page = int(request.GET.get('page', ""))
-    except (ValueError, TypeError):
-        return JsonResponse({'error': 'invalid parameters'}, status=400)
-
-    name = request.GET.get('name', "")
-
-    equipment_list = Equipment.objects.filter(name__contains=name, onshelfapply__state=1)  # 上架商品才能查看
-
-    total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
-    equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
-
-    ret_list = [e.to_dict() for e in equipment_list]
-
-    return JsonResponse({'page': page, 'total_page': total_page, 'posts': ret_list})
+# @csrf_exempt
+# def show_all_equipments(request):
+#     if request.method != 'GET':
+#         return JsonResponse({'error': 'require GET'}, status=400)
+#
+#     try:
+#         page = int(request.GET.get('page', ""))
+#     except (ValueError, TypeError):
+#         return JsonResponse({'error': 'invalid parameters'}, status=400)
+#
+#     name = request.GET.get('name', "")
+#
+#     equipment_list = Equipment.objects.filter(name__contains=name, onshelfapply__state=1)  # 上架商品才能查看
+#
+#     total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
+#     equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
+#
+#     ret_list = [e.to_dict() for e in equipment_list]
+#
+#     return JsonResponse({'page': page, 'total_page': total_page, 'posts': ret_list})
 
 
 @csrf_exempt
@@ -288,11 +288,11 @@ def upgrade_apply(request):
     if not lab_info:
         return JsonResponse({'error': 'require lab information'}, status=400)
 
+    if user.is_provider:
+        return JsonResponse({'error': 'has upgraded'}, status=400)
     try:
-        if user.upgradeapply_set.all():  # 已经有申请了
+        if user.upgradeapply_set.all():  # 已经有申请则修改
             previous_apply = user.upgradeapply_set.all().first()
-            if previous_apply.state == 1:
-                return JsonResponse({'error': 'has upgraded'}, status=400)
             previous_apply.lab_info = lab_info
             previous_apply.state = 0
             previous_apply.save()
@@ -306,6 +306,9 @@ def upgrade_apply(request):
 
 # Get equipment list by: username OR equipment
 def search_equipment(request):
+    username = check_username(request)
+    if not username:
+        return JsonResponse({'error': 'please login'}, status=401)
     if request.method == 'GET':
         equipment_list = []
         username = request.GET.get('username', "")
@@ -510,6 +513,12 @@ def reply_borrow_apply(request):
     if not apply:
         return JsonResponse({'error': 'apply does not exist'}, status=400)
     apply = apply.first()
+    username = check_username(request)
+    if not username:
+        return JsonResponse({'error': 'please login'}, status=401)
+    user = User.objects.get(username=username)
+    if apply not in user.owner_apply_set:
+        return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state != 0:
         return JsonResponse({'error': 'can not accept/refuse this apply'}, status=400)
     if flag != 1 and flag != 2:
@@ -556,6 +565,12 @@ def confirm_return(request):
     if not apply:
         return JsonResponse({'error': 'apply does not exist'}, status=400)
     apply = apply.first()
+    username = check_username(request)
+    if not username:
+        return JsonResponse({'error': 'please login'}, status=401)
+    user = User.objects.get(username=username)
+    if apply not in user.owner_apply_set:
+        return JsonResponse({'error': 'not your equipment'}, status=400)
     if apply.state == 1:
         apply.state = 3
         apply.target_equipment.count += apply.count
