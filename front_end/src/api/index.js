@@ -160,6 +160,12 @@ const api = {
         return axios.post("api/v1/apply",readyData)
     },
 
+    //获取通知
+    notice()
+    {
+        return axios.get("api/v1/notification")
+    }
+
 
 
     

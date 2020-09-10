@@ -26,11 +26,15 @@
                 <router-link to="/messagelist" tag="li">消息列表</router-link>
             </el-menu-item>
 
-            <el-menu-item index="6" v-if="isProvider" style="float:right">
+            <el-menu-item index="6">
+                <router-link to="/notification" tag="li">通知列表</router-link>
+            </el-menu-item>
+
+            <el-menu-item index="7" v-if="isProvider" style="float:right">
                 <router-link to="/provider" tag="li">我的设备管理</router-link>
             </el-menu-item>
 
-            <el-menu-item index="7" style="float:right">
+            <el-menu-item index="8" style="float:right">
                 <router-link to="/ucenter" tag="li">个人中心</router-link>
             </el-menu-item>
         </el-menu>

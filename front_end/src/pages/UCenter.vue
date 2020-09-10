@@ -7,7 +7,13 @@
             <span style="float: left;padding: 0px 0px 0px 100px">个人信息</span>
           </span>
         </div>
-        <div style="float:left">你好，用户{{username}}!</div>
+        <div>你好，用户{{username}}!</div>
+        <div v-if="isProvider">
+        <el-row>你拥有设备提供权限</el-row>
+        </div>
+        <div v-if="!isProvider">
+        <el-row>你没有设备提供权限</el-row>
+        </div>
         <br />
         <br />
         <br />
@@ -41,10 +47,12 @@ export default {
       info: "",
       textarea: "",
       username: "",
+      isProvider:""
     };
   },
   mounted() {
     this.username = localStorage.getItem("username");
+    this.isProvider = localStorage.getItem("isProvider");
   },
   methods: {
     logout() {
