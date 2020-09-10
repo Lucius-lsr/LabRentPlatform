@@ -85,7 +85,10 @@ const api = {
     },
     offShelf(params){
         console.log(params);
-        return axios.delete("/api/v2/offshelf",{params});
+        let readyData=Qs.stringify({
+            equipment_id:params.equipment_id,
+        });
+        return axios.post("/api/v2/offshelf",readyData)
     },
     getBorrowApplyList(){
         return axios.get("/api/v2/borrowapplylist")
