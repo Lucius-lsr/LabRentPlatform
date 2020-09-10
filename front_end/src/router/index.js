@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Layout from "../pages/Layout.vue"
-// import Home from '../pages/Home.vue'
 import Login from "../pages/Login.vue"
 import UCenter from "../pages/UCenter.vue"
 import Messagelist from "../pages/Messagelist.vue"
@@ -14,6 +13,8 @@ import MyEquipmentDetails from "../pages/provider/main/MyEquipmentDetails.vue"
 import equipmentlist from '../pages/User/Equipmentlist.vue';
 import applylist from '../pages/User/Applylist.vue';
 import borrowlist from '../pages/User/Borrowlist.vue';
+import BorrowApplyList from "../pages/provider/main/BorrowApplyList.vue"
+import LendList from "../pages/provider/main/LendList.vue"
 
 
 Vue.use(VueRouter)
@@ -95,6 +96,24 @@ const routes = [
             path: '/provider/myequipmentdetails',
             name: 'MyEquipmentDetails',
             component: MyEquipmentDetails,
+            meta: {
+                isLogin: true,
+                isProvider: true
+            },
+          },
+          {
+            path: '/provider/borrowapplylist',
+            name: 'BorrowApplyList',
+            component: BorrowApplyList,
+            meta: {
+                isLogin: true,
+                isProvider: true
+            },
+          },
+          {
+            path: '/provider/lendlist',
+            name: 'LendList',
+            component: LendList,
             meta: {
                 isLogin: true,
                 isProvider: true
