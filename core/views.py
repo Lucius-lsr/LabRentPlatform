@@ -338,18 +338,21 @@ def get_my_equipment_list(request):
         username = check_username(request)
         if not username:
             return JsonResponse({'error': 'please login'}, status=401)
-        user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except:
+            return JsonResponse({'error': 'please login'}, status=401)
         if not user.is_provider:
             return JsonResponse({'error': '不是提供者'}, status=403)
 
-        equipment_list = user.equipments.all(onshelfapply__state=0)
+        equipment_list = user.equipments.filter(onshelfapply__state=0)
         pending_ = []
         for e in equipment_list:
             dic = e.to_dict()
             dic['state'] = 0
             pending_.append(dic)
 
-        equipment_list = user.equipments.all(onshelfapply__state=1)
+        equipment_list = user.equipments.filter(onshelfapply__state=1)
         accept_ = []
         for e in equipment_list:
             dic = e.to_dict()
