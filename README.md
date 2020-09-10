@@ -15,7 +15,7 @@ python manage.py test core
 
 统计测试覆盖率
 ```
-coverage run --source='.' manage.py test core
+coverage run manage.py test core
 coverage html
 ```
 
@@ -316,7 +316,7 @@ Response:
 }
 ```
 
-增加设备
+增加设备数量
 
 ```
 Method: POST
@@ -335,10 +335,10 @@ Response:
 }
 ```
 
-删除设备
+减少设备数量
 
 ```
-Method: DELETE
+Method: POST
 
 URL:api/v2/delete
 

@@ -1,6 +1,10 @@
 [run]
 branch = False
-source = .
+source =
+    ./core
+omit =
+    */tests.py
+    */00*.py
 
 [report]
 show_missing = True

@@ -2,7 +2,6 @@
     <div class="details">
 
 
-        <div class="myborder">
             <table>
                 <tr>
                     <th>ID：</th>
@@ -25,7 +24,7 @@
                     <td>{{description}}</td>
                 </tr>
             </table>
-        </div>
+
         <el-row :gutter="5" style="margin-top: 40px;">
             <el-col :span="2">
                 <el-button type="primary" @click="modify()">修改信息</el-button>
@@ -293,6 +292,7 @@
         }
     }
 </script>
+
 <style scoped>
     .details {
         text-align: left;
@@ -307,4 +307,21 @@
     .lable {
         margin-top: 10px;
     }
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+
 </style>

@@ -28,7 +28,7 @@
         <template slot-scope="scope">{{ scope.row.target_equipment.provider }}</template>
       </el-table-column>
       <el-table-column label="归还时间" width="120">
-        <template slot-scope="scope">{{ scope.row.end_time }}</template>
+        <template slot-scope="scope">{{ scope.row.endtime }}</template>
       </el-table-column>
     </el-table>
 
@@ -54,7 +54,9 @@ export default {
     api
       .getborrowlist()
       .then((res) => {
-        this.tableData = res.posts;
+        if (res.status == 200) {
+          this.tableData = res.data.posts;
+        }
       })
       .catch((error) => {
         if (error.data["error"]) {
