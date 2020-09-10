@@ -167,6 +167,15 @@ class AllMethodTest(TestCase):
         posts = json.loads(response.content)
         self.assertNotEqual(len(posts['posts']), 0)
 
+        self.logout()
+        self.test_login_v1()
+        response = self.client.get('/api/v1/borrowlist')
+        self.assertEqual(response.status_code, 200)
+        posts = json.loads(response.content)['posts']
+        self.assertNotEqual(len(posts), 0)
+
+        self.logout()
+        self.test_login_v2()
         response = self.client.put(
             '/api/v2/confirm',
             "id={}".format(apply.id)
@@ -174,10 +183,6 @@ class AllMethodTest(TestCase):
         self.assertEqual(response.status_code, 200)
         apply = BorrowApply.objects.get(id=apply.id)
         self.assertEqual(apply.state, 3)
-
-        self.logout()
-        self.test_login_v1()
-
 
 
     def test_equipment(self):
