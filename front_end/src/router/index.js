@@ -14,7 +14,7 @@ import MyEquipmentDetails from "../pages/provider/main/MyEquipmentDetails.vue"
 import equipmentlist from '../pages/User/Equipmentlist.vue';
 import applylist from '../pages/User/Applylist.vue';
 import borrowlist from '../pages/User/Borrowlist.vue';
-import store from "../store"
+
 
 Vue.use(VueRouter)
 
@@ -25,7 +25,7 @@ const routes = [
     component: Login
   },
   {
-    path: "",
+    path: "/",
     name: "Layout",
     redirect: {
       path:'/equipmentlist'
@@ -38,32 +38,33 @@ const routes = [
         name: "UCenter",
         component: UCenter,
         meta: {
-        //   isLogin: true
+           isLogin: true
         }
       },
       {
         path: "/equipmentlist",
         name: "equipmentlist",
-        component: equipmentlist
+        component: equipmentlist,
+        meta: {
+                // isLogin: true,
+        },
       },
       {
         path: "/applylist",
         name: "applylist",
-        component: applylist
+        component: applylist,
+        meta: {
+           isLogin: true
+        }
       },
       {
         path: "/borrowlist",
         name: "borrowlist",
-        component: borrowlist
+        component: borrowlist,
+        meta: {
+           isLogin: true
+        }
       },
-    //   {
-    //     path: '/details/:id',
-    //     name: 'Details',
-    //     component: Details,
-    //     meta: {
-    //         isLogin: true
-    //     }
-    //   },
       {
         path: '/provider',
         name: 'Provider',
@@ -122,25 +123,24 @@ const router = new VueRouter({
   routes
 })
 
-// router.beforeEach((to, from, next) => {
-//     if (to.meta.isLogin) {
-//         // 是否登陆
-//         // 判断vuex中是否存储有token
-//         const token = store.state.LoginModule.token
-//         if (token) {
-//           next();
-//         } 
-//         else {
-//           next({
-//             //回到登录页面
-//             path: "/login"
-//           })
-//         }
-//       } 
-//       else {
-//         next();
-//       }
-// })
+router.beforeEach((to, from, next) => {
+    if (to.meta.isLogin) {
+        // 是否登陆
+        const token = localStorage.getItem('token')
+        if (token) {
+          next();
+        }
+        else {
+          next({
+            //回到登录页面
+            path: "/login"
+          })
+        }
+      }
+      else {
+        next();
+      }
+})
 
 
 export default router
