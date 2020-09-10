@@ -21,8 +21,8 @@
 
         <el-row>
 
-            <el-col :span="8">
-                <el-button style="margin: 30px 30px 0px 80px" @click="prePage()">上一页</el-button>
+            <el-col :span="6">
+                <el-button style="margin: 30px 30px 0px 0px" @click="prePage()">上一页</el-button>
                 <el-button @click="nextPage()">下一页</el-button>
             </el-col>
             <el-col :span="4">
@@ -40,42 +40,39 @@
 
         </el-row>
 
-        <div style="float:left; margin-top: 50px">
 
+        <el-row>
 
-            <el-row>
+            <el-col :span="4">
+                <el-input-number
+                        style="margin: 30px 5px 0px 0px"
+                        controls-position="right"
+                        v-model="applynum"
+                        @change="handleChange"
+                        :min="1"
+                        :max="10"
+                        label="数目"
+                ></el-input-number>
+            </el-col>
+            <el-col :span="4">
+                <div class="block" style="margin: 30px 5px 0px 0px">
+                    <el-date-picker
+                            v-model="end_time"
+                            type="date"
+                            placeholder="归还日期">
+                    </el-date-picker>
+                </div>
+            </el-col>
+            <el-col :span="8">
+                <el-input style="margin: 30px 5px 0px 0px" v-model="reason" placeholder="请输入申请设备的原因"></el-input>
+            </el-col>
+            <el-col :span="4">
+                <el-button style="margin: 30px 5px 0px 0px" type="primary" @click="apply(applynum)">申请</el-button>
+            </el-col>
+        </el-row>
+        <el-row>
 
-                <el-col :span="3">
-                    <el-input-number
-                            style="margin: 30px 5px 0px 20px"
-                            controls-position="right"
-                            v-model="applynum"
-                            @change="handleChange"
-                            :min="1"
-                            :max="10"
-                            label="数目"
-                    ></el-input-number>
-                </el-col>
-                <el-col :span="9">
-                    <div class="block" style="margin: 30px 0px 0px 80px">
-                        <el-date-picker
-                                v-model="end_time"
-                                type="date"
-                                placeholder="归还日期">
-                        </el-date-picker>
-                    </div>
-                </el-col>
-                <el-col :span="9">
-                    <el-input style="margin: 30px 0px 0px 180px" v-model="reason" placeholder="请输入申请设备的原因"></el-input>
-                </el-col>
-                <el-col :span="2">
-                    <el-button style="margin: 30px 5px 0px 200px" type="primary" @click="apply(applynum)">申请</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-
-            </el-row>
-        </div>
+        </el-row>
 
 
     </div>
