@@ -36,35 +36,13 @@
         </el-table>
 
 
-<<<<<<< HEAD
     <el-footer
-      ><layoutFooter
+      ><layoutFooter  style="height: 100px"
         :totalPage="totalPage"
         @changePage="changePage"
       ></layoutFooter
     ></el-footer>
-=======
-        <el-row>
 
-            <el-col :span="6">
-                <el-button style="margin: 30px 30px 0px 0px" @click="prePage()">上一页</el-button>
-                <el-button @click="nextPage()">下一页</el-button>
-            </el-col>
-            <el-col :span="4">
-                <el-input style="margin: 30px 0px 0px 0px" v-model="inputname"
-                          placeholder="请输入需要检索的设备名称"></el-input>
-            </el-col>
-            <el-col :span="2">
-                <el-button style="margin: 30px 5px 0px 0px" type="primary" @click="searchName(inputname)">检索
-                </el-button>
-            </el-col>
-            <el-col :span="1">
-                <el-button style="margin: 30px 5px 0px 0px" type="primary" @click="cancleName()">取消
-                </el-button>
-            </el-col>
-
-        </el-row>
->>>>>>> 59b2574fdcace1c233d08cbbca121ff7aadc29e4
 
 
         <el-row>
@@ -265,7 +243,7 @@
             },
             changePage(page) {
                 this.page = page;
-
+                this.getList();
             },
         },
 

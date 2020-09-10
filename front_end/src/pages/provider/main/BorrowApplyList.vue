@@ -69,17 +69,17 @@
                         <td>{{tableData[currentIndex].reason}}</td>
                     </tr>
                 </table>
-
+                <div style="margin-top: 20px"></div>
                 <el-row :gutter="10" class="info" v-if="tableData[currentIndex].state=== 0">
-
-                </el-row>
-                <span slot="footer" class="dialog-footer">
                     <el-col :span="3">
                         <el-button type="success" @click="whetherAgree(1,tableData[currentIndex].id)">同意</el-button>
                     </el-col>
                     <el-col :span="3">
                         <el-button type="danger" @click="whetherAgree(2,tableData[currentIndex].id)">拒绝</el-button>
                     </el-col>
+                </el-row>
+                <span slot="footer" class="dialog-footer">
+
           <el-button type="primary" @click="dialogVisible = false">确定</el-button>
         </span>
             </el-dialog>

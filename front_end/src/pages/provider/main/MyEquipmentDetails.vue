@@ -111,21 +111,18 @@
                 num: 0,
                 modifyVisible: false,
                 modifyContent: {
-                    // id: this.id,
                     name: this.name,
                     count: this.count,
                     description: this.description,
-                    // provider: this.provider
                 },
             }
         },
         methods: {
             modify() {
-                // this.modifyContent.id = this.id,
                 this.modifyContent.name = this.name,
-                    this.modifyContent.count = this.count,
-                    this.modifyContent.description = this.description,
-                    this.modifyVisible = true
+                this.modifyContent.count = this.count,
+                this.modifyContent.description = this.description,
+                this.modifyVisible = true
             },
             submitMyModify() {
                 if (!this.modifyContent.name || !this.modifyContent.count || !this.modifyContent.description) {
@@ -135,41 +132,51 @@
                         type: "error"
                     });
                 } else {
-                    let params = {
-                        id: this.id,
-                        name: this.name,
-                        description: this.description,
-                        count: this.count
-                    }
-                    api.modifyEquipment(params)
-                        .then(res => {
-                            this.$message({
-                                showClose: true,
-                                message: res.data["message"] + ",修改成功",
-                                type: "success"
-                            });
-
-                            this.modifyVisible = false;
-                            // this.showPostDetails();
-                            this.returnList();
-                        })
-                        .catch(error => {
-                            if (error.response) {
-                                //返回错误code
-                                this.$message({
-                                    showClose: true,
-                                    message: error.response.data.message,
-                                    type: "error"
-                                });
-                            } else {
-                                this.$message({
-                                    showClose: true,
-                                    message: error.data['error'],
-                                    type: "error"
-                                });
-                            }
+                    let flag = new RegExp("^[1-9]([0-9])*$").test(this.modifyContent.count);
+                    if (!flag) {
+                        this.$message({
+                            showClose: true,
+                            message: "设备数目必须为正整数",
+                            type: "error"
                         });
+                    }else {
+                        let params = {
+                            id: this.id,
+                            name: this.modifyContent.name,
+                            description: this.modifyContent.description,
+                            count: this.modifyContent.count
+                        }
+                        api.modifyEquipment(params)
+                            .then(res => {
+                                this.$message({
+                                    showClose: true,
+                                    message: res.data["message"] + ",修改成功",
+                                    type: "success"
+                                });
+
+                                this.modifyVisible = false;
+                                // this.showPostDetails();
+                                this.returnList();
+                            })
+                            .catch(error => {
+                                if (error.response) {
+                                    //返回错误code
+                                    this.$message({
+                                        showClose: true,
+                                        message: error.response.data.message,
+                                        type: "error"
+                                    });
+                                } else {
+                                    this.$message({
+                                        showClose: true,
+                                        message: error.data['error'],
+                                        type: "error"
+                                    });
+                                }
+                            });
+                    }
                 }
+                
             },
             number(e) {
                 console.log(e.target.value);
@@ -207,20 +214,11 @@
                             this.returnList();
                         })
                         .catch(error => {
-                            if (error.response) {
-                                //返回错误code
-                                this.$message({
-                                    showClose: true,
-                                    message: error.response.data.message,
-                                    type: "error"
-                                });
-                            } else {
                                 this.$message({
                                     showClose: true,
                                     message: error.data['error'],
                                     type: "error"
                                 });
-                            }
                         });
                 }
             },
