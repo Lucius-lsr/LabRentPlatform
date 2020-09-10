@@ -240,4 +240,6 @@ export default {
   text-align: left;
   font-size: 20px;
 }
+
+
 </style>
