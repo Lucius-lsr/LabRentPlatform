@@ -268,6 +268,7 @@ Response:
         'description': ,
         'count': ,
         'provider': ,
+        'state':
     }
     ]
 }

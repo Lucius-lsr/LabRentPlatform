@@ -596,7 +596,7 @@ def confirm_return(request):
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
-    if apply not in user.owner_apply_set:
+    if apply not in user.owner_apply_set.all():
         return JsonResponse({'error': '不是您的设备'}, status=400)
     if apply.state == 1:
         apply.state = 3
