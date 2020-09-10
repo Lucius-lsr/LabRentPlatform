@@ -12,8 +12,8 @@
       <el-table-column prop="borrower" label="申请人" width="150"></el-table-column>
       <el-table-column prop="state" label="状态" width="150">
         <template slot-scope="scope">
-            <div v-if="scope.row.state === 1" style="color=green">已租借</div>
-            <div v-if="scope.row.state === 3" style="color=rgb(132, 43, 226)">已归还</div>
+            <div v-if="scope.row.state === 1" style="color:green">已租借</div>
+            <div v-if="scope.row.state === 3" style="color:rgb(132, 43, 226)">已归还</div>
         </template></el-table-column>
       <el-table-column label="操作" width="200">
           <template slot-scope="scope">
@@ -46,8 +46,8 @@
       <el-row class="info">归还时间: {{ tableData[currentIndex].endtime }}</el-row>
       <el-row class="info">申请人: {{ tableData[currentIndex].borrower }}</el-row>
       <el-row class="info">申请状态：
-          <el-col :offset="2" v-if="tableData[currentIndex].state=== 1" style="color=green">已租借</el-col>
-          <el-col :offset="2" v-if="tableData[currentIndex].state=== 3" style="color=rgb(132, 43, 226)">已归还</el-col>
+          <el-col :offset="2" v-if="tableData[currentIndex].state=== 1" style="color:green">已租借</el-col>
+          <el-col :offset="2" v-if="tableData[currentIndex].state=== 3" style="color:rgb(132, 43, 226)">已归还</el-col>
       </el-row>
       <el-row class="info">申请原因：</el-row>
       <el-row class="info">

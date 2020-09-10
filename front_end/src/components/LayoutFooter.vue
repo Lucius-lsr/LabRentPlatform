@@ -5,15 +5,15 @@
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage"
       :page-size="10"
-      layout="total, prev, pager, next, jumper"
-      :total="totalPost"
+      layout=" prev, pager, next, jumper"
+      :page-count="totalPage"
       background
     >
     </el-pagination>
   </div>
 </template>
 
-<script>
+<script>              //Todo
 export default {
   methods: {
     handleSizeChange(val) {
@@ -31,7 +31,7 @@ export default {
     };
   },
   name: "layoutFooter",
-  props: ["totalPost"]
+  props: ["totalPage"]
 };
 </script>
 <style lang="scss" scoped>
