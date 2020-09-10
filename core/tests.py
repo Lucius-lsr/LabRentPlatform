@@ -17,7 +17,8 @@ class UserMethodTest(TestCase):
             username='user_v2',
             password=r'pbkdf2_sha256$216000$g4lJOgTwTI14$xTETWjvOcse6DJ07vIN+kJkyBVQOnYzKPQJLY2fofag=',
             email='user2@user2.com',
-            is_verified=True
+            is_verified=True,
+            is_provider=True
         )
         self.assertEqual(len(User.objects.all()), 2)
 
@@ -65,5 +66,30 @@ class UserMethodTest(TestCase):
                 "page": 1
             }
         )
-        print(json.loads(response.content))
         self.assertEqual(response.status_code, 200)
+
+    def test_upgrade_apply(self):
+        response = self.client.patch(
+            '/api/v1/login',
+            "username=user_v1&password=blueice"
+        )
+        self.assertEqual(response.status_code, 200)
+        response = self.client.put(
+            '/api/v1/upgrade',
+            "lab_info=This is an upgrade apply"
+        )
+        self.assertEqual(response.status_code, 200)
+        apply = UpgradeApply.objects.filter(applicant__username='user_v1')
+        self.assertNotEqual(len(apply), 0)
+        apply = apply[0]
+        self.assertEqual(apply.state, 0)
+        apply.state = 1
+        apply.save()
+
+    def test_on_shelf(self):
+        response = self.client.patch(
+            '/api/v2/login',
+            "username=user_v1&password=blueice"
+        )
+        self.assertEqual(response.status_code, 200)
+

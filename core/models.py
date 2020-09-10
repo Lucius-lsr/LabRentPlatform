@@ -80,6 +80,7 @@ class BorrowApply(models.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'owner': self.owner.username,
             'borrower': self.borrower.username,
             'count': self.count,
             'target_equipment': self.target_equipment.to_dict(),
