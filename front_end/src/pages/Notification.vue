@@ -4,17 +4,16 @@
           当前无通知
       </div>
     <div v-if="messages.length">
-      <div v-for="index in (0,messages.length)" :key="index">
-        <div style="margin: 5px">
-          <el-card class="box-card">
+      <div v-for="index in (0,messages.length)"   :key="index">
+        <div style="margin: 5px" v-if="messages[index-1]">
+          <el-card class="box-card"  :id="color(messages[index-1].state)">
             <div slot="header">
                 <span
-                  v-if="messages[index-1]"
                   width="30%"
                   style="float: left"
                 >类型:  {{change(messages[index-1].type)}}</span>
 
-                <span v-if="messages[index-1]">
+                <span>
                   结果:{{state(messages[index-1].state)}}
               </span>
             </div>
@@ -65,6 +64,12 @@ export default {
           if(state=="borrow apply")return '租借申请'
           if(state=="onshelf apply")return '上架申请'
           if(state=="upgrade apply")return '升级申请'
+      },
+      color(state)
+      {
+          state=String(state)
+          if(state==2)return "redtype"
+          if(state==1)return "greentype"
       }
   },
 };
@@ -84,5 +89,14 @@ export default {
 
 .box-card {
   width: 100%;
+}
+
+#redtype{
+background-color:salmon;
+
+}
+
+#greentype{
+background-color: springgreen;
 }
 </style>

@@ -680,7 +680,7 @@ def get_notification(request):
     # as borrower
     all_borrow_apply = user.user_apply_set.filter(Q(unread=True), (Q(state=1) | Q(state=2)))
     for apply in all_borrow_apply:
-        apply.unread = False
+        apply.unread = True
         apply.save()
         ret.append({'type': 'borrow apply', 'state': apply.state, 'apply': apply.to_dict()})
 
@@ -691,7 +691,7 @@ def get_notification(request):
         apply = equipment.onshelfapply
         if not apply.unread or apply.state == 0:
             continue
-        apply.unread = False
+        apply.unread = True
         apply.save()
         ret.append({'type': 'onshelf apply', 'state': apply.state, 'apply': apply.to_dict()})
 
@@ -702,7 +702,7 @@ def get_notification(request):
         if not apply.unread or apply.state == 0:
             pass
         else:
-            apply.unread = False
+            apply.unread = True
             apply.save()
             ret.append({'type': 'upgrade apply', 'state': apply.state})
 
