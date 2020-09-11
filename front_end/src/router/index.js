@@ -16,6 +16,7 @@ import applylist from '../pages/User/Applylist.vue';
 import borrowlist from '../pages/User/Borrowlist.vue';
 import BorrowApplyList from "../pages/provider/main/BorrowApplyList.vue"
 import LendList from "../pages/provider/main/LendList.vue"
+import Admin from "../pages/admin.vue"
 
 
 Vue.use(VueRouter)
@@ -25,6 +26,11 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login
+  },
+  {
+    path: "",
+    name: "admin",
+    component: Admin
   },
   {
     path: "/",
