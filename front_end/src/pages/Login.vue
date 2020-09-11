@@ -84,7 +84,7 @@
                                 password: this.ruleForm.password
                             })
                                 .then(res => {
-                                    if (res.status === 200) {
+                                    if (res.status === 200&&res.data.user) {
                                         // console.log(document.cookie);
                                         let cookie = String(document.cookie)
                                         let index = cookie.indexOf('=')
