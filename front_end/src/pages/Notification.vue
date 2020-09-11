@@ -18,9 +18,11 @@
                   结果:{{state(messages[index-1].state)}}
               </span>
             </div>
-             <div class="text item"  v-if="messages[index-1]" v-html="messages[index-1].apply.target_equipment"></div><br/>
-            <div class="text item" v-if="messages[index-1].apply.remarks">备注：{{messages[index-1].apply.remarks}}</div>
-            <div class="text item" v-if="messages[index-1].apply.reason">备注：{{messages[index-1].apply.reason}}</div>
+             <div class="text item"  v-if="messages[index-1].apply" v-html="messages[index-1].apply.target_equipment"></div><br/>
+            <div v-if="messages[index-1].apply">
+            <div class="text item" v-if="messages[index-1].apply.remarks">申请理由：{{messages[index-1].apply.remarks}}</div>
+            <div class="text item" v-if="messages[index-1].apply.reason">申请理由：{{messages[index-1].apply.reason}}</div>
+             </div>
           </el-card>
         </div>
       </div>
@@ -45,8 +47,8 @@ export default {
   mounted(){
     api.notice().then((res) => {
       this.messages = res.data.notification;
-
-    console.log(this.messages[0].apply)
+    // console.log(this.messages)
+    // console.log(this.messages[0].apply)
     //    console.log( res.data)
     })
   },
