@@ -685,7 +685,6 @@ def get_notification(request):
         ret.append({'type': 'borrow apply', 'state': apply.state, 'apply': apply.to_dict()})
 
     # as provider
-    
     equipments = user.equipments.all()
     for equipment in equipments:
         apply = equipment.onshelfapply
