@@ -28,7 +28,7 @@ const routes = [
     component: Login
   },
   {
-    path: "",
+    path: "/admin",
     name: "admin",
     component: Admin
   },
@@ -40,7 +40,6 @@ const routes = [
     },
     component: Layout,
     children: [
-      
       {
         path: "/ucenter",
         name: "UCenter",
@@ -70,7 +69,7 @@ const routes = [
         name: "equipmentlist",
         component: equipmentlist,
         meta: {
-                // isLogin: true,
+            isLogin: true,
         },
       },
       {
