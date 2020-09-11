@@ -687,7 +687,10 @@ def get_notification(request):
     # as provider
     equipments = user.equipments.all()
     for equipment in equipments:
-        apply = equipment.onshelfapply
+        try:
+            apply = equipment.onshelfapply
+        except:
+            continue
         if not apply.unread or apply.state == 0:
             continue
         apply.unread = False
