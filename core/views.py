@@ -159,35 +159,11 @@ def logout(request):
     return JsonResponse({'error': 'no valid session'}, status=401)
 
 
-# @csrf_exempt
-# def show_all_equipments(request):
-#     if request.method != 'GET':
-#         return JsonResponse({'error': 'require GET'}, status=400)
-#
-#     try:
-#         page = int(request.GET.get('page', ""))
-#     except (ValueError, TypeError):
-#         return JsonResponse({'error': 'invalid parameters'}, status=400)
-#
-#     name = request.GET.get('name', "")
-#
-#     equipment_list = Equipment.objects.filter(name__contains=name, onshelfapply__state=1)  # 上架商品才能查看
-#
-#     total_page = int((len(equipment_list) + PAGE_SIZE - 1) / PAGE_SIZE)
-#     equipment_list = equipment_list[(page - 1) * PAGE_SIZE: page * PAGE_SIZE]
-#
-#     ret_list = [e.to_dict() for e in equipment_list]
-#
-#     return JsonResponse({'page': page, 'total_page': total_page, 'posts': ret_list})
-
-
 @csrf_exempt
 def borrow_apply(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'require POST'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     borrower = User.objects.filter(username=username)
     if not borrower:
         return JsonResponse({'error': 'please login'}, status=401)
@@ -226,8 +202,6 @@ def get_borrow_apply_list(request):
     if request.method != 'GET':
         return JsonResponse({'error': 'require GET'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     borrower = User.objects.filter(username=username)
     if not borrower:
         return JsonResponse({'error': 'please login'}, status=401)
@@ -246,8 +220,6 @@ def get_borrow_list(request):
     if request.method != 'GET':
         return JsonResponse({'error': 'require GET'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     borrower = User.objects.filter(username=username)
     if not borrower:
         return JsonResponse({'error': 'please login'}, status=401)
@@ -265,8 +237,6 @@ def upgrade_apply(request):
     if request.method != 'PUT':
         return JsonResponse({'error': 'require PUT'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.filter(username=username)
     if not user:
         return JsonResponse({'error': 'please login'}, status=401)
@@ -274,20 +244,22 @@ def upgrade_apply(request):
 
     data = QueryDict(request.body)
     lab_info = data.get('lab_info')
-    if not lab_info:
+    address = data.get('address')
+    phone = data.get('phone')
+    if not lab_info or not address or not phone:
         return JsonResponse({'error': '请填写实验室信息'}, status=400)
 
-    if user.is_provider:
-        return JsonResponse({'error': '已经升级'}, status=400)
     try:
-        if user.upgradeapply_set.all():  # 已经有申请则修改
+        if user.upgradeapply_set.all():
             previous_apply = user.upgradeapply_set.all().first()
             previous_apply.lab_info = lab_info
+            previous_apply.address = address
+            previous_apply.phone = phone
             previous_apply.state = 0
             previous_apply.save()
             return JsonResponse({'message': 'modify apply'})
         else:
-            UpgradeApply.objects.create(applicant=user, lab_info=lab_info, state=0)
+            UpgradeApply.objects.create(applicant=user, lab_info=lab_info, address=address, phone=phone, state=0)
             return JsonResponse({'message': 'ok'})
     except (TypeError, ValueError):
         return JsonResponse({'error': '申请失败'}, status=401)
@@ -296,8 +268,6 @@ def upgrade_apply(request):
 # Get equipment list by: username OR equipment
 def search_equipment(request):
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     if request.method == 'GET':
         equipment_list = []
         username = request.GET.get('username', "")
@@ -338,8 +308,6 @@ def get_my_equipment_list(request):
         except (ValueError, TypeError):
             return JsonResponse({'error': '无效的参数'}, status=400)
         username = check_username(request)
-        if not username:
-            return JsonResponse({'error': 'please login'}, status=401)
         try:
             user = User.objects.get(username=username)
         except:
@@ -385,8 +353,6 @@ def edit_equipment(request):
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
-        if not username:
-            return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
         if not user.is_provider:
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -410,8 +376,6 @@ def increase_equipment(request):
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
-        if not username:
-            return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
         if not user.is_provider:
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -433,8 +397,6 @@ def decrease_equipment(request):
 
         custom_equipment = Equipment.objects.get(id=equipment_id)
         username = check_username(request)
-        if not username:
-            return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
         if not user.is_provider:
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -463,8 +425,6 @@ def on_shelf_equipment(request):
     except (TypeError, ValueError):
         return JsonResponse({'error': '无效的参数'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -489,8 +449,6 @@ def off_shelf_equipment(request):
         except:
             return JsonResponse({'error': '设备不存在'}, status=400)
         username = check_username(request)
-        if not username:
-            return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
         if not user.is_provider:
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -506,8 +464,6 @@ def off_shelf_equipment(request):
 def show_borrow_apply_list(request):
     if request.method == 'GET':
         username = check_username(request)
-        if not username:
-            return JsonResponse({'error': 'please login'}, status=401)
         user = User.objects.get(username=username)
         if not user.is_provider:
             return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -538,8 +494,6 @@ def reply_borrow_apply(request):
         return JsonResponse({'error': '租借请求不存在'}, status=400)
     apply = apply.first()
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -564,8 +518,6 @@ def get_lend_list(request):
     if request.method != 'GET':
         return JsonResponse({'error': 'require GET'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -595,8 +547,6 @@ def confirm_return(request):
         return JsonResponse({'error': '租借请求不存在'}, status=400)
     apply = apply.first()
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     user = User.objects.get(username=username)
     if not user.is_provider:
         return JsonResponse({'error': 'Permission denied'}, status=403)
@@ -620,8 +570,6 @@ def send_message(request):
     if not receiver_name:
         return JsonResponse({'error': 'No receiver'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     sender = User.objects.get(username=username)
     content = request.POST.get('content', '')
     try:
@@ -640,8 +588,6 @@ def get_messages(request):
     if request.method != 'GET':
         return JsonResponse({'error': 'require GET'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     all_messages = Message.objects.filter(Q(sender__username=username) | Q(receiver__username=username)).order_by('id')
     all_messages = [x.to_dict() for x in all_messages]
     new_messages = [x for x in all_messages if x['receiver'] == username and x['is_read'] == False]
@@ -660,8 +606,6 @@ def read_messages(request):
     if request.method != 'PUT':
         return JsonResponse({'error': 'require PUT'}, status=400)
     username = check_username(request)
-    if not username:
-        return JsonResponse({'error': 'please login'}, status=401)
     new_messages = Message.objects.filter(Q(receiver__username=username) & Q(is_read=False))
     for m in new_messages:
         m.is_read = True

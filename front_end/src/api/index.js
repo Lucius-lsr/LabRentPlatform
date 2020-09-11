@@ -4,7 +4,6 @@ import Qs from 'qs'   //引入方式
 const api = {
     
     getRegister(params){
-        console.log(params);
         let readyData=Qs.stringify({
             username:params.username,
             password:params.password,
@@ -14,7 +13,6 @@ const api = {
     },
 
     getLogin(params){
-        // console.log(params);
         let readyData=Qs.stringify({
             username:params.username,
             password:params.password
@@ -29,12 +27,7 @@ const api = {
 
     //成为设备提供者申请
     upgrade_apply(params){
-        // console.log(params);
-        let readyData=Qs.stringify({
-            lab_info:params.lab_info,
-            
-        });
-        // console.log(readyData)
+        let readyData=Qs.stringify(params);
         return axios.put("/api/v1/upgrade",readyData)
     },
 

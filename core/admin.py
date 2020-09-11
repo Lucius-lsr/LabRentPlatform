@@ -44,7 +44,7 @@ class OnShelfApplyAdmin(admin.ModelAdmin):
 
 
 class UpgradeApplyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'applicant', 'lab_info', 'state')
+    list_display = ('id', 'applicant', 'lab_info', 'address', 'phone', 'state')
     list_display_links = ('id', 'applicant',)
     list_filter = ("state",)
     list_editable = ['state']
@@ -112,6 +112,19 @@ class SummaryAdmin(admin.ModelAdmin):
         return response
 
 
+class UserLogAdmin(admin.ModelAdmin):
+    list_display = ('user', 'request_type', 'request_query', 'request_body', 'status')
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    def has_module_permission(self, request):
+        return True
+
+
 # Register your models here.
 admin.site.register(User, UserAdmin)
 admin.site.register(Equipment, EquipmentAdmin)
@@ -121,5 +134,6 @@ admin.site.register(OnShelfApply, OnShelfApplyAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(Summary, SummaryAdmin)
+admin.site.register(UserLog, UserLogAdmin)
 admin.site.site_title = '设备租赁智能管理平台'
 admin.site.site_header = '后台管理系统'

@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class CoreConfig(AppConfig):
     name = 'core'
-    verbose_name = '管理'
+    verbose_name = '数据'
