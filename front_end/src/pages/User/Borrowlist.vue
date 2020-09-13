@@ -6,7 +6,7 @@
       :data="tableData"
       tooltip-effect="dark"
       style="width: 100%"
-      
+      :row-class-name="tableRowClassName"
       id="redtype"
 
       @selection-change="handleSelectionChange"
@@ -33,9 +33,9 @@
       <el-table-column label="归还时间" width="120">
         <template slot-scope="scope">{{ scope.row.endtime }}</template>
       </el-table-column>
-      <!-- <el-table-column label="是否即将到期" width="120">
-        <template slot-scope="scope">{{ scope.row.state }}</template>
-      </el-table-column> -->
+      <el-table-column label="是否即将到期" width="120">
+        <template slot-scope="scope">{{trans(scope.row.state) }}</template>
+      </el-table-column>
     </el-table>
 
     <div style="margin-top: 20px">
@@ -132,6 +132,17 @@ export default {
       
     },
 
+    trans(state){
+        if (state === 0) {
+        return "未过期";  //正常，白色
+      } else if (state === 1) {//紧急，灰色
+        return "未过期，紧急";
+      } else if (state === 2) {//过期，红色
+        return "已过期";
+      }
+      return "未过期";
+    },
+
     tableRowClassName({ row }) {
       //console.log(rowIndex);
       if (row.state === 0) {
@@ -148,12 +159,12 @@ export default {
 </script>
 
 <style scoped>
-#redtype{
+/* #redtype{
 background-color:salmon;
 
 }
 
 #greentype{
 background-color: springgreen;
-}
+} */
 </style>
