@@ -3,6 +3,7 @@ cffi==1.14.2
 coverage==5.2.1
 cryptography==3.1
 Django==3.1.1
+django-cors-headers==3.5.0
 pycparser==2.20
 PyMySQL==0.10.0
 pytz==2020.1
