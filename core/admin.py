@@ -113,7 +113,7 @@ class SummaryAdmin(admin.ModelAdmin):
 
 
 class UserLogAdmin(admin.ModelAdmin):
-    list_display = ('user', 'request_type', 'request_query', 'request_body', 'status')
+    list_display = ('user', 'request_type', 'request_query', 'status')
 
     def has_add_permission(self, request, obj=None):
         return False
