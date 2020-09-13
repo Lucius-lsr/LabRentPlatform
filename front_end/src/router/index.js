@@ -188,6 +188,9 @@ router.beforeEach((to, from, next) => {
                         path: "/"
                     })
                 }
+                else{
+                    next()
+                }
             }
             else{
                 next()
