@@ -46,7 +46,7 @@ def register(request):
             try:
                 send_email_code(email, 1, request.get_host())
             except ConnectionRefusedError:
-                return JsonResponse({'error': '邮件发送失败'}, status=500)
+                return JsonResponse({'error': '邮件发送失败'}, status=400)
             else:
                 user_exist.username = username
                 user_exist.password = make_password(password)
@@ -57,7 +57,7 @@ def register(request):
     try:
         send_email_code(email, 1, request.get_host())
     except ConnectionRefusedError:
-        return HttpResponse({'error': '邮件发送失败'}, status=500)
+        return HttpResponse({'error': '邮件发送失败'}, status=400)
     else:
         user = User()
         user.username = username
