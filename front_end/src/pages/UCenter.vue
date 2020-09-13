@@ -68,7 +68,11 @@
         },
         mounted() {
             this.username = localStorage.getItem("username");
-            this.isProvider = localStorage.getItem("isProvider");
+            if(localStorage.getItem("isProvider") === 'true'){
+                this.isProvider = true;
+            }else{
+                this.isProvider = false;
+            }
         },
         methods: {
             logout() {

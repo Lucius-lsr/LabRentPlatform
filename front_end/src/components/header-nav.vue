@@ -49,11 +49,15 @@
         data() {
             return {
                 activeIndex: "1",
-                isProvider: ""
+                isProvider: false
             };
         },
         mounted() {
-            this.isProvider = localStorage.getItem("isProvider");
+            if(localStorage.getItem("isProvider") === 'true'){
+                this.isProvider = true;
+            }else{
+                this.isProvider = false;
+            }
         },
         methods: {
             role() {
