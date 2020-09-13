@@ -76,7 +76,7 @@
                     });
                     return;
                 }
-                if (this.type === "login") {                            //登陆
+                if (this.type === "login") {                            //登录
                     this.$refs[formName].validate(valid => {
                         if (valid) {
                             api.getLogin({
@@ -98,11 +98,10 @@
                                         localStorage.setItem("username", res.data.user);
                                         // //将用户id存下
                                         // mydata.mydata.id=res.data.userId
-                                        if (res.data.isprovider) {
-                                            localStorage.setItem("isProvider", res.data.isprovider);
-                                            // this.$store.commit("setRole", res.data.isprovider);
+                                        
+                                        localStorage.setItem("isProvider", res.data.isprovider);
+                                        // this.$store.commit("setRole", res.data.isprovider);
 
-                                        }
                                         this.$message({
                                             showClose: true,
                                             message: "登录成功，欢迎" + res.data.user,
