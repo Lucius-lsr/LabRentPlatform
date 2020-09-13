@@ -6,7 +6,9 @@
       :data="tableData"
       tooltip-effect="dark"
       style="width: 100%"
-      :row-class-name="tableRowClassName"
+      
+      id="redtype"
+
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"></el-table-column>
@@ -144,3 +146,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#redtype{
+background-color:salmon;
+
+}
+
+#greentype{
+background-color: springgreen;
+}
+</style>
