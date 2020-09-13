@@ -108,7 +108,7 @@ const api = {
     //获取设备列表
     getequipmentlist(page,name)
     {
-        console.log(name)
+        // console.log(name)
         return axios.get("/api/v1/search?"+"page="+String(page)+"&name="+name)
     },
     //申请信息列表
